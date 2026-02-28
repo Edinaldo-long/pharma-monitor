@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pharma & Cia — Monitor Ambiental</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #1b5e20; --verde-mid: #2e7d32; --verde-light: #4caf50;
+    --verde-pale: #e8f5e9; --vermelho: #c62828; --amarelo: #f9a825;
+    --bg: #f0f4f0; --card: #ffffff; --text: #1a2a1a;
+    --text-muted: #5a7a5a; --border: #c8dcc8;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Syne',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+  header {
+    background:#0a0a0a; padding:0 2rem;
+    display:flex; align-items:center; justify-content:space-between;
+    height:72px; position:sticky; top:0; z-index:100;
+    box-shadow:0 2px 16px rgba(0,0,0,.4);
+    border-bottom:2px solid var(--verde-mid);
+  }
+  .header-logo { height:56px; width:auto; object-fit:contain; }
+  .header-right { display:flex; align-items:center; gap:16px; }
+  .header-title { display:flex; flex-direction:column; align-items:flex-end; }
+  .header-title span:first-child { font-size:.7rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--verde-light); }
+  .header-title span:last-child { font-family:'DM Mono',monospace; font-size:.65rem; color:rgba(255,255,255,.5); }
+  .status-badge { display:flex; align-items:center; gap:6px; background:rgba(76,175,80,.15); border:1px solid rgba(76,175,80,.3); border-radius:20px; padding:5px 14px; font-family:'DM Mono',monospace; font-size:.72rem; color:var(--verde-light); }
+  .dot { width:7px; height:7px; border-radius:50%; background:var(--verde-light); animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
+
+  main { max-width:1100px; margin:0 auto; padding:2rem 1.5rem; display:grid; gap:1.5rem; }
+
+  .anvisa-banner { background:var(--card); border:2px solid var(--border); border-radius:16px; padding:1rem 1.5rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+  .anvisa-banner .label { font-size:.68rem; font-weight:700; letter-spacing:.1em; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; }
+  .status-pill { padding:6px 18px; border-radius:20px; font-size:.85rem; font-weight:700; letter-spacing:.04em; }
+  .status-ok     { background:#e8f5e9; color:#1b5e20; border:1.5px solid #4caf50; }
+  .status-alerta { background:#fff8e1; color:#e65100; border:1.5px solid #f9a825; }
+  .status-critico{ background:#ffebee; color:#c62828; border:1.5px solid #ef5350; }
+  .anvisa-limits { font-family:'DM Mono',monospace; font-size:.78rem; color:var(--text-muted); display:flex; gap:1.5rem; flex-wrap:wrap; }
+
+  .section-title { font-size:.7rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); display:flex; align-items:center; gap:8px; }
+  .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  .cards-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+  .sensor-card { background:var(--card); border:2px solid var(--border); border-radius:20px; padding:1.5rem; position:relative; overflow:hidden; transition:transform .2s,box-shadow .2s; }
+  .sensor-card:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,0,0,.08); }
+  .sensor-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:var(--verde-mid); border-radius:20px 20px 0 0; }
+  .sensor-card.alerta::before  { background:var(--amarelo); }
+  .sensor-card.critico::before { background:var(--vermelho); }
+  .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+  .card-title { font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); }
+  .card-icon { font-size:1.4rem; }
+  .valor-atual { font-family:'DM Mono',monospace; font-size:3.5rem; font-weight:500; color:var(--verde); line-height:1; margin-bottom:.5rem; }
+  .valor-atual.alerta  { color:#e65100; }
+  .valor-atual.critico { color:var(--vermelho); }
+  .valor-unidade { font-size:1.5rem; font-weight:400; color:var(--text-muted); }
+  .progress-bar-wrap { margin-top:1rem; }
+  .progress-bar-label { display:flex; justify-content:space-between; font-size:.65rem; color:var(--text-muted); margin-bottom:4px; font-family:'DM Mono',monospace; }
+  .progress-bar-bg { height:6px; background:var(--verde-pale); border-radius:3px; overflow:hidden; }
+  .progress-bar-fill { height:100%; border-radius:3px; background:var(--verde-mid); transition:width .8s ease; }
+  .progress-bar-fill.alerta  { background:var(--amarelo); }
+  .progress-bar-fill.critico { background:var(--vermelho); }
+  .minmax-row { display:flex; gap:1rem; margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border); }
+  .minmax-item { flex:1; text-align:center; }
+  .minmax-label { font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:2px; }
+  .minmax-valor { font-family:'DM Mono',monospace; font-size:1.1rem; font-weight:500; }
+
+  .graficos-card { background:var(--card); border:2px solid var(--border); border-radius:16px; overflow:hidden; }
+  .graficos-toolbar { padding:1rem 1.5rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.75rem; background:#fafcfa; }
+  .graficos-toolbar h3 { font-size:.72rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); }
+  .periodo-btns { display:flex; gap:6px; flex-wrap:wrap; }
+  .periodo-btn { padding:5px 14px; border-radius:20px; border:1.5px solid var(--border); background:#fff; font-family:'Syne',sans-serif; font-size:.75rem; font-weight:600; color:var(--text-muted); cursor:pointer; transition:all .15s; }
+  .periodo-btn:hover { border-color:var(--verde-mid); color:var(--verde-mid); }
+  .periodo-btn.ativo { background:var(--verde-mid); border-color:var(--verde-mid); color:#fff; }
+  .graficos-grid { display:grid; grid-template-columns:1fr 1fr; }
+  .grafico-item { padding:1rem 1.5rem 1.5rem; }
+  .grafico-item:first-child { border-right:1px solid var(--border); }
+  .grafico-item h4 { font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); margin-bottom:.75rem; }
+  .grafico-item iframe { width:100%; height:250px; border:none; border-radius:8px; display:block; }
+
+  .historico-card { background:var(--card); border:2px solid var(--border); border-radius:16px; overflow:hidden; }
+  .historico-toolbar { padding:1rem 1.5rem; border-bottom:1px solid var(--border); background:#fafcfa; font-size:.72rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); }
+  .historico-scroll { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; font-size:.84rem; }
+  thead th { background:var(--verde); color:#fff; padding:10px 14px; text-align:center; font-size:.7rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+  tbody tr:nth-child(even) { background:var(--verde-pale); }
+  tbody tr:hover { background:#d0ead0; }
+  tbody td { padding:9px 14px; text-align:center; font-family:'DM Mono',monospace; font-size:.8rem; border-bottom:1px solid var(--border); }
+  .td-ok { color:var(--verde-mid); font-weight:500; }
+  .td-critico { color:var(--vermelho); font-weight:700; }
+  .tag-ok   { background:#e8f5e9; color:#1b5e20; padding:2px 10px; border-radius:10px; font-size:.68rem; font-weight:700; }
+  .tag-fora { background:#ffebee; color:#c62828; padding:2px 10px; border-radius:10px; font-size:.68rem; font-weight:700; }
+
+  footer { text-align:center; padding:2rem; font-size:.72rem; color:var(--text-muted); font-family:'DM Mono',monospace; }
+  .loading { font-family:'DM Mono',monospace; font-size:1.2rem; color:var(--text-muted); animation:blink 1s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  @media (max-width:700px) {
+    .cards-grid,.graficos-grid { grid-template-columns:1fr; }
+    .grafico-item:first-child { border-right:none; border-bottom:1px solid var(--border); }
+    .header-logo { height:44px; }
+    .header-title { display:none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img class="header-logo" src="logofarmacia.png" alt="Pharma & Cia"
+    onerror="this.style.display='none';document.getElementById('logo-fallback').style.display='block'">
+  <span id="logo-fallback" style="display:none;color:#4caf50;font-size:1.2rem;font-weight:700;">Pharma &amp; Cia</span>
+  <div class="header-right">
+    <div class="header-title">
+      <span>Monitor Ambiental</span>
+      <span id="ultima-atualizacao">Carregando...</span>
+    </div>
+    <div class="status-badge"><div class="dot"></div>AO VIVO</div>
+  </div>
+</header>
+
+<main>
+
+  <div class="anvisa-banner">
+    <div>
+      <div class="label">Status ANVISA RDC 301 — Laboratório</div>
+      <div id="anvisa-pill" class="status-pill status-ok">✓ DENTRO DOS LIMITES</div>
+    </div>
+    <div class="anvisa-limits">
+      <span>🌡️ Temperatura: 15°C – 25°C</span>
+      <span>💧 Umidade: 40% – 70%</span>
+    </div>
+  </div>
+
+  <div class="section-title">Leitura em Tempo Real</div>
+  <div class="cards-grid">
+    <div class="sensor-card" id="card-temp">
+      <div class="card-header">
+        <div class="card-title">Temperatura</div>
+        <div class="card-icon">🌡️</div>
+      </div>
+      <div class="valor-atual" id="temp-atual"><span class="loading">···</span></div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-label"><span>15°C (mín)</span><span id="temp-barra-label">–</span><span>25°C (máx)</span></div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" id="temp-barra" style="width:0%"></div></div>
+      </div>
+      <div class="minmax-row">
+        <div class="minmax-item"><div class="minmax-label">Mínima (24h)</div><div class="minmax-valor" id="temp-min">–</div></div>
+        <div class="minmax-item"><div class="minmax-label">Máxima (24h)</div><div class="minmax-valor" id="temp-max">–</div></div>
+      </div>
+    </div>
+
+    <div class="sensor-card" id="card-umid">
+      <div class="card-header">
+        <div class="card-title">Umidade Relativa</div>
+        <div class="card-icon">💧</div>
+      </div>
+      <div class="valor-atual" id="umid-atual"><span class="loading">···</span></div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-label"><span>40% (mín)</span><span id="umid-barra-label">–</span><span>70% (máx)</span></div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" id="umid-barra" style="width:0%"></div></div>
+      </div>
+      <div class="minmax-row">
+        <div class="minmax-item"><div class="minmax-label">Mínima (24h)</div><div class="minmax-valor" id="umid-min">–</div></div>
+        <div class="minmax-item"><div class="minmax-label">Máxima (24h)</div><div class="minmax-valor" id="umid-max">–</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Gráficos Históricos</div>
+  <div class="graficos-card">
+    <div class="graficos-toolbar">
+      <h3>📊 Selecione o período de visualização</h3>
+      <div class="periodo-btns">
+        <button class="periodo-btn ativo" onclick="mudarPeriodo(60,this)">1 hora</button>
+        <button class="periodo-btn" onclick="mudarPeriodo(288,this)">24 horas</button>
+        <button class="periodo-btn" onclick="mudarPeriodo(1008,this)">3 dias</button>
+        <button class="periodo-btn" onclick="mudarPeriodo(2016,this)">7 dias</button>
+        <button class="periodo-btn" onclick="mudarPeriodo(8640,this)">30 dias</button>
+      </div>
+    </div>
+    <div class="graficos-grid">
+      <div class="grafico-item">
+        <h4>🌡️ Temperatura (°C)</h4>
+        <iframe id="grafico-temp" src="" loading="lazy"></iframe>
+      </div>
+      <div class="grafico-item">
+        <h4>💧 Umidade Relativa (%)</h4>
+        <iframe id="grafico-umid" src="" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Últimos Registros</div>
+  <div class="historico-card">
+    <div class="historico-toolbar">📋 Histórico de leituras (últimas 20)</div>
+    <div class="historico-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Data / Hora</th><th>Temp. Atual</th><th>Temp. Mín</th><th>Temp. Máx</th>
+            <th>Umid. Atual</th><th>Umid. Mín</th><th>Umid. Máx</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-historico">
+          <tr><td colspan="8" style="padding:2rem;color:#999;font-family:'DM Mono',monospace">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  Pharma &amp; Cia · ANVISA RDC 301 · Laboratório · Responsável: Edinado Santos de Almeida<br>
+  Canal ThingSpeak: 3196550 · Atualização automática a cada 60 segundos
+</footer>
+
+<script>
+const CHANNEL='3196550', API_KEY='6HM2HMXBNJP32QOC';
+const TMIN=15,TMAX=25,UMIN=40,UMAX=70;
+
+function mudarPeriodo(results,btn){
+  document.querySelectorAll('.periodo-btn').forEach(b=>b.classList.remove('ativo'));
+  btn.classList.add('ativo');
+  atualizarGraficos(results);
+}
+
+function atualizarGraficos(results){
+  const base=`https://thingspeak.com/channels/${CHANNEL}/charts/`;
+  const p=`?bgcolor=%23ffffff&dynamic=true&results=${results}&type=line&width=auto&height=240`;
+  document.getElementById('grafico-temp').src=base+`1${p}&color=%232e7d32&title=Temperatura&yaxis=°C`;
+  document.getElementById('grafico-umid').src=base+`2${p}&color=%231565c0&title=Umidade&yaxis=%25`;
+}
+
+function stT(v){return(v<TMIN||v>TMAX)?'critico':(v>TMAX-2||v<TMIN+2)?'alerta':'ok';}
+function stU(v){return(v<UMIN||v>UMAX)?'critico':(v>UMAX-5||v<UMIN+5)?'alerta':'ok';}
+function pct(v,mn,mx){return Math.max(0,Math.min(100,((v-mn)/(mx-mn))*100));}
+function fmtDH(iso){const d=new Date(iso);return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
+
+async function atualizarTempoReal(){
+  try{
+    const r=await fetch(`https://api.thingspeak.com/channels/${CHANNEL}/feeds/last.json?api_key=${API_KEY}`);
+    const d=await r.json();
+    const t=parseFloat(d.field1), u=parseFloat(d.field2);
+    if(!isNaN(t)){
+      const s=stT(t);
+      document.getElementById('temp-atual').innerHTML=`${t.toFixed(1)}<span class="valor-unidade">°C</span>`;
+      document.getElementById('temp-atual').className=`valor-atual ${s!='ok'?s:''}`;
+      document.getElementById('card-temp').className=`sensor-card ${s!='ok'?s:''}`;
+      document.getElementById('temp-barra').style.width=pct(t,TMIN,TMAX)+'%';
+      document.getElementById('temp-barra').className=`progress-bar-fill ${s!='ok'?s:''}`;
+      document.getElementById('temp-barra-label').textContent=t.toFixed(1)+'°C';
+    }
+    if(!isNaN(u)){
+      const s=stU(u);
+      document.getElementById('umid-atual').innerHTML=`${u.toFixed(1)}<span class="valor-unidade">%</span>`;
+      document.getElementById('umid-atual').className=`valor-atual ${s!='ok'?s:''}`;
+      document.getElementById('card-umid').className=`sensor-card ${s!='ok'?s:''}`;
+      document.getElementById('umid-barra').style.width=pct(u,UMIN,UMAX)+'%';
+      document.getElementById('umid-barra').className=`progress-bar-fill ${s!='ok'?s:''}`;
+      document.getElementById('umid-barra-label').textContent=u.toFixed(1)+'%';
+    }
+    const pill=document.getElementById('anvisa-pill');
+    const st=!isNaN(t)?stT(t):'ok', su=!isNaN(u)?stU(u):'ok';
+    if(st=='critico'||su=='critico'){pill.textContent='⚠ FORA DOS LIMITES ANVISA';pill.className='status-pill status-critico';}
+    else if(st=='alerta'||su=='alerta'){pill.textContent='⚡ ATENÇÃO — PRÓXIMO DO LIMITE';pill.className='status-pill status-alerta';}
+    else{pill.textContent='✓ DENTRO DOS LIMITES';pill.className='status-pill status-ok';}
+    document.getElementById('ultima-atualizacao').textContent='Atualizado: '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }catch(e){console.error(e);}
+}
+
+async function atualizarMinMax(){
+  try{
+    const r=await fetch(`https://api.thingspeak.com/channels/${CHANNEL}/feeds.json?api_key=${API_KEY}&results=288`);
+    const d=await r.json(); const f=d.feeds||[];
+    const ts=f.map(x=>parseFloat(x.field1)).filter(v=>!isNaN(v));
+    const hs=f.map(x=>parseFloat(x.field2)).filter(v=>!isNaN(v));
+    if(ts.length){document.getElementById('temp-min').textContent=Math.min(...ts).toFixed(1)+'°C';document.getElementById('temp-max').textContent=Math.max(...ts).toFixed(1)+'°C';}
+    if(hs.length){document.getElementById('umid-min').textContent=Math.min(...hs).toFixed(1)+'%';document.getElementById('umid-max').textContent=Math.max(...hs).toFixed(1)+'%';}
+  }catch(e){console.error(e);}
+}
+
+async function atualizarHistorico(){
+  try{
+    const r=await fetch(`https://api.thingspeak.com/channels/${CHANNEL}/feeds.json?api_key=${API_KEY}&results=20`);
+    const d=await r.json(); const feeds=(d.feeds||[]).reverse();
+    const tbody=document.getElementById('tabela-historico');
+    if(!feeds.length){tbody.innerHTML='<tr><td colspan="8" style="padding:1.5rem;color:#999">Nenhum dado</td></tr>';return;}
+    const ts=feeds.map(f=>parseFloat(f.field1)).filter(v=>!isNaN(v));
+    const hs=feeds.map(f=>parseFloat(f.field2)).filter(v=>!isNaN(v));
+    const tMn=ts.length?Math.min(...ts):null, tMx=ts.length?Math.max(...ts):null;
+    const uMn=hs.length?Math.min(...hs):null, uMx=hs.length?Math.max(...hs):null;
+    tbody.innerHTML=feeds.map(f=>{
+      const t=parseFloat(f.field1),u=parseFloat(f.field2);
+      const tOk=!isNaN(t)&&t>=TMIN&&t<=TMAX, uOk=!isNaN(u)&&u>=UMIN&&u<=UMAX;
+      return`<tr>
+        <td>${fmtDH(f.created_at)}</td>
+        <td class="${!isNaN(t)?(tOk?'td-ok':'td-critico'):''}">${!isNaN(t)?t.toFixed(1)+'°C':'–'}</td>
+        <td>${tMn!==null?tMn.toFixed(1)+'°C':'–'}</td>
+        <td>${tMx!==null?tMx.toFixed(1)+'°C':'–'}</td>
+        <td class="${!isNaN(u)?(uOk?'td-ok':'td-critico'):''}">${!isNaN(u)?u.toFixed(1)+'%':'–'}</td>
+        <td>${uMn!==null?uMn.toFixed(1)+'%':'–'}</td>
+        <td>${uMx!==null?uMx.toFixed(1)+'%':'–'}</td>
+        <td>${(tOk&&uOk)?'<span class="tag-ok">✓ OK</span>':'<span class="tag-fora">⚠ FORA</span>'}</td>
+      </tr>`;
+    }).join('');
+  }catch(e){console.error(e);}
+}
+
+atualizarGraficos(60);
+atualizarTempoReal();
+atualizarMinMax();
+atualizarHistorico();
+setInterval(atualizarTempoReal,60000);
+setInterval(()=>{atualizarMinMax();atualizarHistorico();},60000);
+</script>
+</body>
+</html>
