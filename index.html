@@ -271,14 +271,19 @@ const TMIN=15,TMAX=25,UMIN=40,UMAX=70;
 
 // Preenche datas: padrão últimos 7 dias
 window.onload = () => {
-  const hoje = new Date();
-  const fmt  = d => d.toISOString().split('T')[0];
+  const fmt = d => {
+    const y   = d.getFullYear();
+    const m   = String(d.getMonth()+1).padStart(2,'0');
+    const dia = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${dia}`;
+  };
+  const hoje    = new Date();
   const hojeStr = fmt(hoje);
-  // Limita ambos os campos para não permitir datas futuras
   document.getElementById('data-inicio').max = hojeStr;
-  document.getElementById('data-fim').max = hojeStr;
-  document.getElementById('data-fim').value = hojeStr;
-  const ini = new Date(); ini.setDate(hoje.getDate()-7);
+  document.getElementById('data-fim').max    = hojeStr;
+  document.getElementById('data-fim').value  = hojeStr;
+  const ini = new Date();
+  ini.setDate(ini.getDate()-7);
   document.getElementById('data-inicio').value = fmt(ini);
 };
 
