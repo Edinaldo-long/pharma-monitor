@@ -131,17 +131,15 @@
     outline-offset:1px;
   }
 
-  /* ─── TOOLTIP (correção de corte) ─── */
+  /* ─── TOOLTIP ─── */
   /*
-    Estratégia: por padrão o tooltip abre para CIMA (bottom: calc(100% + 12px)).
-    Para os dois últimos cards (3º e 4º), abrimos para a ESQUERDA
-    usando a classe .tooltip-left que fica posicionada à esquerda do card.
-    Isso evita sair da viewport.
+    Cards 1 e 2 (esquerda): abre para BAIXO → evita corte pelo header fixo.
+    Cards 3 e 4 (direita, .tooltip-right): abre para a ESQUERDA → evita sair da viewport.
   */
   .tooltip {
     visibility:hidden; opacity:0;
     position:absolute;
-    bottom:calc(100% + 12px);
+    top:calc(100% + 12px);
     left:50%;
     transform:translateX(-50%);
     background:#1a2a1a; color:#fff;
@@ -153,26 +151,28 @@
     transition:opacity .2s, visibility .2s;
     pointer-events:none;
   }
-  /* seta padrão (aponta para baixo) */
+  /* seta aponta para CIMA (tooltip abre abaixo do card) */
   .tooltip::after {
-    content:''; position:absolute; top:100%; left:50%;
+    content:''; position:absolute;
+    bottom:100%; left:50%;
     transform:translateX(-50%);
     border:6px solid transparent;
-    border-top-color:#1a2a1a;
+    border-bottom-color:#1a2a1a;
   }
 
-  /* Variante: abre para a ESQUERDA do card (cards do lado direito da grid) */
+  /* Cards direitos: abre para a ESQUERDA */
   .resumo-card.tooltip-right .tooltip {
+    top:50%;
     left:auto;
     right:calc(100% + 12px);
-    bottom:50%;
-    transform:translateY(50%);
+    transform:translateY(-50%);
   }
   .resumo-card.tooltip-right .tooltip::after {
+    bottom:auto;
     top:50%;
     left:100%;
     transform:translateY(-50%);
-    border-top-color:transparent;
+    border-bottom-color:transparent;
     border-left-color:#1a2a1a;
   }
 
