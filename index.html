@@ -209,20 +209,30 @@
     </div>
   </div>
 
-  <!-- GRAFANA — mesmo estilo do ThingSpeak acima -->
+  <!-- GRAFANA — botões de acesso direto -->
   <div class="section-title">Dashboards Grafana</div>
   <div class="graficos-card">
     <div class="graficos-toolbar">
       <h3>📈 Painéis complementares — Grafana</h3>
     </div>
     <div class="graficos-grid">
-      <div class="grafico-item">
+      <div class="grafico-item" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;">
         <h4>🌡️ Temperatura</h4>
-        <iframe src="https://esatakeu.grafana.net/public-dashboards/a19310195eec42ffb06b5072b6db2d4f" loading="lazy" allowfullscreen></iframe>
+        <p style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--text-muted);text-align:center;">Clique para abrir o painel completo de temperatura no Grafana</p>
+        <a href="https://esatakeu.grafana.net/public-dashboards/a19310195eec42ffb06b5072b6db2d4f" target="_blank"
+          style="display:inline-flex;align-items:center;gap:8px;padding:10px 28px;background:var(--verde-mid);color:#fff;border-radius:20px;text-decoration:none;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;transition:background .2s;"
+          onmouseover="this.style.background='#1b5e20'" onmouseout="this.style.background='#2e7d32'">
+          📊 Abrir Painel de Temperatura
+        </a>
       </div>
-      <div class="grafico-item">
+      <div class="grafico-item" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;">
         <h4>💧 Umidade Relativa</h4>
-        <iframe src="https://esatakeu.grafana.net/public-dashboards/f6bd16c53b45416e92287fd22ccd2a7a" loading="lazy" allowfullscreen></iframe>
+        <p style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--text-muted);text-align:center;">Clique para abrir o painel completo de umidade no Grafana</p>
+        <a href="https://esatakeu.grafana.net/public-dashboards/f6bd16c53b45416e92287fd22ccd2a7a" target="_blank"
+          style="display:inline-flex;align-items:center;gap:8px;padding:10px 28px;background:var(--verde-mid);color:#fff;border-radius:20px;text-decoration:none;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;transition:background .2s;"
+          onmouseover="this.style.background='#1b5e20'" onmouseout="this.style.background='#2e7d32'">
+          📊 Abrir Painel de Umidade
+        </a>
       </div>
     </div>
   </div>
