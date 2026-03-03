@@ -81,49 +81,21 @@
   .grafico-item h4 { font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); margin-bottom:.75rem; }
   .grafico-item iframe { width:100%; height:250px; border:none; border-radius:8px; display:block; }
 
-  .historico-card { background:var(--card); border:2px solid var(--border); border-radius:16px; overflow:hidden; }
-  .historico-toolbar { padding:1rem 1.5rem; border-bottom:1px solid var(--border); background:#fafcfa; font-size:.72rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); }
-  .periodo-body { padding:1.5rem 2rem 2rem; }
-  .datas-row { display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-bottom:1.8rem; }
-  .data-group { display:flex; flex-direction:column; gap:8px; }
-  .data-group label { font-size:.68rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); }
-  .data-group input[type="date"] {
-    width:100%; padding:12px 16px;
-    border:2px solid var(--border); border-radius:12px;
-    font-family:'DM Mono',monospace; font-size:1rem; color:var(--text);
-    background:#fff; outline:none; transition:border-color .2s;
-  }
-  .data-group input[type="date"]:focus { border-color:var(--verde-mid); }
-  .btn-gerar-wrap { text-align:center; }
-  .btn-gerar {
-    padding:12px 52px;
-    background:var(--verde-mid); color:#fff;
-    border:none; border-radius:20px;
-    font-family:'Syne',sans-serif; font-weight:700; font-size:.9rem;
-    letter-spacing:.05em; cursor:pointer;
-    transition:background .2s, transform .1s;
-    box-shadow:0 4px 14px rgba(46,125,50,.25);
-  }
-  .btn-gerar:hover { background:var(--verde); transform:translateY(-1px); }
-  .btn-gerar:active { transform:translateY(0); }
-
-  /* Input de data reutilizável nos relatórios */
   .relatorio-date-input {
     width:100%; padding:10px 14px;
     border:2px solid var(--border); border-radius:12px;
     font-family:'DM Mono',monospace; font-size:.95rem; color:var(--text);
     background:#fff; outline:none; transition:border-color .2s;
   }
-  .relatorio-date-input:focus { border-color:#1565c0; }
+  .relatorio-date-input:focus { border-color:var(--verde-mid); }
+  .relatorio-date-input.azul:focus { border-color:#1565c0; }
 
   footer { text-align:center; padding:2rem; font-size:.72rem; color:var(--text-muted); font-family:'DM Mono',monospace; }
-  .btn-pdf { display:inline-block; margin-top:1rem; padding:10px 28px; background:var(--verde-mid); color:#fff; border-radius:20px; text-decoration:none; font-family:'Syne',sans-serif; font-weight:700; font-size:.85rem; letter-spacing:.05em; transition:background .2s; }
-  .btn-pdf:hover { background:var(--verde); }
   .loading { font-family:'DM Mono',monospace; font-size:1.2rem; color:var(--text-muted); animation:blink 1s infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
   @media (max-width:700px) {
-    .cards-grid,.graficos-grid,.datas-row { grid-template-columns:1fr; }
+    .cards-grid,.graficos-grid { grid-template-columns:1fr; }
     .grafico-item:first-child { border-right:none; border-bottom:1px solid var(--border); }
     .header-logo { height:44px; }
     .header-title { display:none; }
@@ -268,14 +240,14 @@
           <label style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);">📅 Data Final</label>
           <input type="date" id="data-fim" class="relatorio-date-input">
         </div>
-        <button onclick="gerarRelatorio()"
+        <button id="btn-analitico" onclick="gerarRelatorio()"
           style="margin-top:.5rem;padding:11px 0;background:var(--verde-mid);color:#fff;border:none;border-radius:20px;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.05em;cursor:pointer;transition:background .2s;width:100%;"
-          onmouseover="this.style.background='#1b5e20'" onmouseout="this.style.background='#2e7d32'">
+          onmouseover="if(!this.disabled)this.style.background='#1b5e20'" onmouseout="if(!this.disabled)this.style.background='#2e7d32'">
           📊 Gerar Relatório Analítico
         </button>
       </div>
 
-      <!-- OFICIAL ANVISA — agora com seletor de período -->
+      <!-- OFICIAL ANVISA -->
       <div class="grafico-item" style="display:flex;flex-direction:column;gap:1rem;padding:1.5rem 2rem 2rem;">
         <h4>📄 Relatório Oficial ANVISA</h4>
         <p style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--text-muted);line-height:1.6;">
@@ -283,17 +255,15 @@
         </p>
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:.5rem;">
           <label style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);">📅 Data Inicial</label>
-          <input type="date" id="anvisa-inicio" class="relatorio-date-input" style="border-color:#bbdefb;"
-            onfocus="this.style.borderColor='#1565c0'" onblur="this.style.borderColor='#bbdefb'">
+          <input type="date" id="anvisa-inicio" class="relatorio-date-input azul">
         </div>
         <div style="display:flex;flex-direction:column;gap:8px;">
           <label style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);">📅 Data Final</label>
-          <input type="date" id="anvisa-fim" class="relatorio-date-input" style="border-color:#bbdefb;"
-            onfocus="this.style.borderColor='#1565c0'" onblur="this.style.borderColor='#bbdefb'">
+          <input type="date" id="anvisa-fim" class="relatorio-date-input azul">
         </div>
-        <button onclick="baixarRelatorioOficial()"
+        <button id="btn-anvisa" onclick="baixarRelatorioOficial()"
           style="margin-top:.5rem;padding:11px 0;background:#1565c0;color:#fff;border:none;border-radius:20px;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.05em;cursor:pointer;transition:background .2s;width:100%;"
-          onmouseover="this.style.background='#0d47a1'" onmouseout="this.style.background='#1565c0'">
+          onmouseover="if(!this.disabled)this.style.background='#0d47a1'" onmouseout="if(!this.disabled)this.style.background='#1565c0'">
           📄 Baixar Relatório Oficial PDF
         </button>
       </div>
@@ -309,119 +279,197 @@
 </footer>
 
 <script>
-const CHANNEL='3196550', API_KEY='6HM2HMXBNJP32QOC';
-const TMIN=15,TMAX=25,UMIN=40,UMAX=70;
+// ============================================================
+// CONFIGURAÇÕES
+// ============================================================
+const CHANNEL = '3196550';
+const API_KEY = '6HM2HMXBNJP32QOC';
+const TMIN = 15, TMAX = 25, UMIN = 40, UMAX = 70;
 
-// Preenche datas: padrão últimos 7 dias
+// ⚠️ Cole aqui a URL do seu Web App após implantar o Apps Script:
+// Apps Script → Implantar → Gerenciar implantações → copiar URL
+const APPS_SCRIPT_URL = 'COLE_AQUI_A_URL_DO_SEU_WEB_APP';
+
+// ============================================================
+// INICIALIZAÇÃO — preenche datas padrão
+// ============================================================
 window.onload = () => {
   const fmt = d => {
     const y   = d.getFullYear();
-    const m   = String(d.getMonth()+1).padStart(2,'0');
-    const dia = String(d.getDate()).padStart(2,'0');
+    const m   = String(d.getMonth() + 1).padStart(2, '0');
+    const dia = String(d.getDate()).padStart(2, '0');
     return `${y}-${m}-${dia}`;
   };
-  const hoje    = new Date();
-  const hojeStr = fmt(hoje);
 
-  // Relatório Analítico
-  document.getElementById('data-inicio').max = hojeStr;
-  document.getElementById('data-fim').max    = hojeStr;
-  document.getElementById('data-fim').value  = hojeStr;
-  const ini = new Date();
-  ini.setDate(ini.getDate()-7);
-  document.getElementById('data-inicio').value = fmt(ini);
+  const hoje        = new Date();
+  const hojeStr     = fmt(hoje);
+  const seteDias    = new Date(); seteDias.setDate(seteDias.getDate() - 7);
+  const primeiroDia = fmt(new Date(hoje.getFullYear(), hoje.getMonth(), 1));
 
-  // Relatório Oficial ANVISA — mesmo padrão: últimos 7 dias
-  document.getElementById('anvisa-inicio').max = hojeStr;
-  document.getElementById('anvisa-fim').max    = hojeStr;
-  document.getElementById('anvisa-fim').value  = hojeStr;
-  const iniA = new Date();
-  iniA.setDate(iniA.getDate()-7);
-  document.getElementById('anvisa-inicio').value = fmt(iniA);
+  // Relatório Analítico — padrão: últimos 7 dias
+  document.getElementById('data-inicio').max   = hojeStr;
+  document.getElementById('data-fim').max      = hojeStr;
+  document.getElementById('data-inicio').value = fmt(seteDias);
+  document.getElementById('data-fim').value    = hojeStr;
+
+  // Relatório Oficial ANVISA — padrão: primeiro dia do mês até hoje
+  document.getElementById('anvisa-inicio').max   = hojeStr;
+  document.getElementById('anvisa-fim').max      = hojeStr;
+  document.getElementById('anvisa-inicio').value = primeiroDia;
+  document.getElementById('anvisa-fim').value    = hojeStr;
+
+  atualizarGraficos(60);
+  atualizarTempoReal();
+  atualizarMinMax();
+  setInterval(atualizarTempoReal, 60000);
+  setInterval(atualizarMinMax, 60000);
 };
 
-function gerarRelatorio(){
+// ============================================================
+// RELATÓRIO ANALÍTICO
+// ============================================================
+function gerarRelatorio() {
   const ini = document.getElementById('data-inicio').value;
   const fim = document.getElementById('data-fim').value;
-  if(!ini||!fim){ alert('Selecione as duas datas!'); return; }
+  if (!ini || !fim) { alert('Selecione as duas datas!'); return; }
   window.open(`relatorio.html?inicio=${ini}&fim=${fim}`, '_blank');
 }
 
-function baixarRelatorioOficial(){
+// ============================================================
+// RELATÓRIO OFICIAL ANVISA
+// Chama o Apps Script que identifica a aba correta pelo mês
+// e retorna a URL do PDF com o gid dinâmico
+// ============================================================
+async function baixarRelatorioOficial() {
   const ini = document.getElementById('anvisa-inicio').value;
   const fim = document.getElementById('anvisa-fim').value;
-  if(!ini||!fim){ alert('Selecione as duas datas!'); return; }
-  // Passa as datas como parâmetros na URL do Google Sheets PDF
-  const url = `https://docs.google.com/spreadsheets/d/1gS-HOohmfPVEGsE29R4RlM3_QJOslYkBJW5u4pDAcMU/export?format=pdf&gid=110458944&landscape=true&fitw=true&gridlines=false&ir=false&ic=false&r1=0&c1=0&fecha_inicio=${ini}&fecha_fin=${fim}`;
-  window.open(url, '_blank');
+
+  if (!ini || !fim) {
+    alert('Selecione as duas datas!');
+    return;
+  }
+
+  // Valida que as datas estão no mesmo mês/ano
+  const [anoI, mesI] = ini.split('-');
+  const [anoF, mesF] = fim.split('-');
+  if (anoI !== anoF || mesI !== mesF) {
+    alert('⚠️ O Relatório Oficial cobre um mês por vez.\nSelecione datas dentro do mesmo mês.');
+    return;
+  }
+
+  const btn = document.getElementById('btn-anvisa');
+  btn.innerHTML        = '⏳ Gerando PDF...';
+  btn.disabled         = true;
+  btn.style.background = '#546e7a';
+
+  try {
+    const resp = await fetch(`${APPS_SCRIPT_URL}?acao=pdf&inicio=${ini}&fim=${fim}`);
+    const json = await resp.json();
+
+    if (json.ok) {
+      window.open(json.url, '_blank');
+    } else {
+      alert('Erro ao gerar PDF:\n' + json.erro);
+    }
+  } catch (e) {
+    alert('Erro de conexão com o servidor.\nVerifique a constante APPS_SCRIPT_URL no index.html.');
+    console.error(e);
+  } finally {
+    btn.innerHTML        = '📄 Baixar Relatório Oficial PDF';
+    btn.disabled         = false;
+    btn.style.background = '#1565c0';
+  }
 }
 
-function mudarPeriodo(results,btn){
-  document.querySelectorAll('.periodo-btn').forEach(b=>b.classList.remove('ativo'));
+// ============================================================
+// GRÁFICOS THINGSPEAK
+// ============================================================
+function mudarPeriodo(results, btn) {
+  document.querySelectorAll('.periodo-btn').forEach(b => b.classList.remove('ativo'));
   btn.classList.add('ativo');
   atualizarGraficos(results);
 }
 
-function atualizarGraficos(results){
-  const base=`https://thingspeak.com/channels/${CHANNEL}/charts/`;
-  const p=`?bgcolor=%23ffffff&dynamic=true&results=${results}&type=line&width=auto&height=240`;
-  document.getElementById('grafico-temp').src=base+`1${p}&color=%232e7d32&title=Temperatura&yaxis=°C`;
-  document.getElementById('grafico-umid').src=base+`2${p}&color=%231565c0&title=Umidade&yaxis=%25`;
+function atualizarGraficos(results) {
+  const base = `https://thingspeak.com/channels/${CHANNEL}/charts/`;
+  const p    = `?bgcolor=%23ffffff&dynamic=true&results=${results}&type=line&width=auto&height=240`;
+  document.getElementById('grafico-temp').src = base + `1${p}&color=%232e7d32&title=Temperatura&yaxis=°C`;
+  document.getElementById('grafico-umid').src = base + `2${p}&color=%231565c0&title=Umidade&yaxis=%25`;
 }
 
-function stT(v){return(v<TMIN||v>TMAX)?'critico':(v>TMAX-2||v<TMIN+2)?'alerta':'ok';}
-function stU(v){return(v<UMIN||v>UMAX)?'critico':(v>UMAX-5||v<UMIN+5)?'alerta':'ok';}
-function pct(v,mn,mx){return Math.max(0,Math.min(100,((v-mn)/(mx-mn))*100));}
-function fmtDH(iso){const d=new Date(iso);return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
+// ============================================================
+// HELPERS DE STATUS
+// ============================================================
+function stT(v) { return (v < TMIN || v > TMAX) ? 'critico' : (v > TMAX - 2 || v < TMIN + 2) ? 'alerta' : 'ok'; }
+function stU(v) { return (v < UMIN || v > UMAX) ? 'critico' : (v > UMAX - 5 || v < UMIN + 5) ? 'alerta' : 'ok'; }
+function pct(v, mn, mx) { return Math.max(0, Math.min(100, ((v - mn) / (mx - mn)) * 100)); }
 
-async function atualizarTempoReal(){
-  try{
-    const r=await fetch(`https://api.thingspeak.com/channels/${CHANNEL}/feeds/last.json?api_key=${API_KEY}`);
-    const d=await r.json();
-    const t=parseFloat(d.field1), u=parseFloat(d.field2);
-    if(!isNaN(t)){
-      const s=stT(t);
-      document.getElementById('temp-atual').innerHTML=`${t.toFixed(1)}<span class="valor-unidade">°C</span>`;
-      document.getElementById('temp-atual').className=`valor-atual ${s!='ok'?s:''}`;
-      document.getElementById('card-temp').className=`sensor-card ${s!='ok'?s:''}`;
-      document.getElementById('temp-barra').style.width=pct(t,TMIN,TMAX)+'%';
-      document.getElementById('temp-barra').className=`progress-bar-fill ${s!='ok'?s:''}`;
-      document.getElementById('temp-barra-label').textContent=t.toFixed(1)+'°C';
+// ============================================================
+// LEITURA EM TEMPO REAL
+// ============================================================
+async function atualizarTempoReal() {
+  try {
+    const r = await fetch(`https://api.thingspeak.com/channels/${CHANNEL}/feeds/last.json?api_key=${API_KEY}`);
+    const d = await r.json();
+    const t = parseFloat(d.field1), u = parseFloat(d.field2);
+
+    if (!isNaN(t)) {
+      const s = stT(t);
+      document.getElementById('temp-atual').innerHTML        = `${t.toFixed(1)}<span class="valor-unidade">°C</span>`;
+      document.getElementById('temp-atual').className        = `valor-atual ${s !== 'ok' ? s : ''}`;
+      document.getElementById('card-temp').className         = `sensor-card ${s !== 'ok' ? s : ''}`;
+      document.getElementById('temp-barra').style.width      = pct(t, TMIN, TMAX) + '%';
+      document.getElementById('temp-barra').className        = `progress-bar-fill ${s !== 'ok' ? s : ''}`;
+      document.getElementById('temp-barra-label').textContent = t.toFixed(1) + '°C';
     }
-    if(!isNaN(u)){
-      const s=stU(u);
-      document.getElementById('umid-atual').innerHTML=`${u.toFixed(1)}<span class="valor-unidade">%</span>`;
-      document.getElementById('umid-atual').className=`valor-atual ${s!='ok'?s:''}`;
-      document.getElementById('card-umid').className=`sensor-card ${s!='ok'?s:''}`;
-      document.getElementById('umid-barra').style.width=pct(u,UMIN,UMAX)+'%';
-      document.getElementById('umid-barra').className=`progress-bar-fill ${s!='ok'?s:''}`;
-      document.getElementById('umid-barra-label').textContent=u.toFixed(1)+'%';
+
+    if (!isNaN(u)) {
+      const s = stU(u);
+      document.getElementById('umid-atual').innerHTML        = `${u.toFixed(1)}<span class="valor-unidade">%</span>`;
+      document.getElementById('umid-atual').className        = `valor-atual ${s !== 'ok' ? s : ''}`;
+      document.getElementById('card-umid').className         = `sensor-card ${s !== 'ok' ? s : ''}`;
+      document.getElementById('umid-barra').style.width      = pct(u, UMIN, UMAX) + '%';
+      document.getElementById('umid-barra').className        = `progress-bar-fill ${s !== 'ok' ? s : ''}`;
+      document.getElementById('umid-barra-label').textContent = u.toFixed(1) + '%';
     }
-    const pill=document.getElementById('anvisa-pill');
-    const st=!isNaN(t)?stT(t):'ok', su=!isNaN(u)?stU(u):'ok';
-    if(st=='critico'||su=='critico'){pill.textContent='⚠ FORA DOS LIMITES ANVISA';pill.className='status-pill status-critico';}
-    else if(st=='alerta'||su=='alerta'){pill.textContent='⚡ ATENÇÃO — PRÓXIMO DO LIMITE';pill.className='status-pill status-alerta';}
-    else{pill.textContent='✓ DENTRO DOS LIMITES';pill.className='status-pill status-ok';}
-    document.getElementById('ultima-atualizacao').textContent='Atualizado: '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  }catch(e){console.error(e);}
+
+    const pill = document.getElementById('anvisa-pill');
+    const st   = !isNaN(t) ? stT(t) : 'ok';
+    const su   = !isNaN(u) ? stU(u) : 'ok';
+    if (st === 'critico' || su === 'critico') {
+      pill.textContent = '⚠ FORA DOS LIMITES ANVISA'; pill.className = 'status-pill status-critico';
+    } else if (st === 'alerta' || su === 'alerta') {
+      pill.textContent = '⚡ ATENÇÃO — PRÓXIMO DO LIMITE'; pill.className = 'status-pill status-alerta';
+    } else {
+      pill.textContent = '✓ DENTRO DOS LIMITES'; pill.className = 'status-pill status-ok';
+    }
+
+    document.getElementById('ultima-atualizacao').textContent =
+      'Atualizado: ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+  } catch (e) { console.error(e); }
 }
 
-async function atualizarMinMax(){
-  try{
-    const r=await fetch(`https://api.thingspeak.com/channels/${CHANNEL}/feeds.json?api_key=${API_KEY}&results=288`);
-    const d=await r.json(); const f=d.feeds||[];
-    const ts=f.map(x=>parseFloat(x.field1)).filter(v=>!isNaN(v));
-    const hs=f.map(x=>parseFloat(x.field2)).filter(v=>!isNaN(v));
-    if(ts.length){document.getElementById('temp-min').textContent=Math.min(...ts).toFixed(1)+'°C';document.getElementById('temp-max').textContent=Math.max(...ts).toFixed(1)+'°C';}
-    if(hs.length){document.getElementById('umid-min').textContent=Math.min(...hs).toFixed(1)+'%';document.getElementById('umid-max').textContent=Math.max(...hs).toFixed(1)+'%';}
-  }catch(e){console.error(e);}
+// ============================================================
+// MIN/MAX 24h
+// ============================================================
+async function atualizarMinMax() {
+  try {
+    const r = await fetch(`https://api.thingspeak.com/channels/${CHANNEL}/feeds.json?api_key=${API_KEY}&results=288`);
+    const d = await r.json();
+    const f = d.feeds || [];
+    const ts = f.map(x => parseFloat(x.field1)).filter(v => !isNaN(v));
+    const hs = f.map(x => parseFloat(x.field2)).filter(v => !isNaN(v));
+    if (ts.length) {
+      document.getElementById('temp-min').textContent = Math.min(...ts).toFixed(1) + '°C';
+      document.getElementById('temp-max').textContent = Math.max(...ts).toFixed(1) + '°C';
+    }
+    if (hs.length) {
+      document.getElementById('umid-min').textContent = Math.min(...hs).toFixed(1) + '%';
+      document.getElementById('umid-max').textContent = Math.max(...hs).toFixed(1) + '%';
+    }
+  } catch (e) { console.error(e); }
 }
-
-atualizarGraficos(60);
-atualizarTempoReal();
-atualizarMinMax();
-setInterval(atualizarTempoReal,60000);
-setInterval(atualizarMinMax,60000);
 </script>
 </body>
 </html>
