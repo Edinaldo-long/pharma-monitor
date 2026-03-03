@@ -68,7 +68,6 @@
   .minmax-label { font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:2px; }
   .minmax-valor { font-family:'DM Mono',monospace; font-size:1.1rem; font-weight:500; }
 
-  /* === GRÁFICOS — mesmo estilo usado tanto ThingSpeak quanto Grafana === */
   .graficos-card { background:var(--card); border:2px solid var(--border); border-radius:16px; overflow:hidden; }
   .graficos-toolbar { padding:1rem 1.5rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.75rem; background:#fafcfa; }
   .graficos-toolbar h3 { font-size:.72rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); }
@@ -82,7 +81,6 @@
   .grafico-item h4 { font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); margin-bottom:.75rem; }
   .grafico-item iframe { width:100%; height:250px; border:none; border-radius:8px; display:block; }
 
-  /* === SELETOR DE PERÍODO — mesmo estilo do historico-card === */
   .historico-card { background:var(--card); border:2px solid var(--border); border-radius:16px; overflow:hidden; }
   .historico-toolbar { padding:1rem 1.5rem; border-bottom:1px solid var(--border); background:#fafcfa; font-size:.72rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); }
   .periodo-body { padding:1.5rem 2rem 2rem; }
@@ -108,6 +106,15 @@
   }
   .btn-gerar:hover { background:var(--verde); transform:translateY(-1px); }
   .btn-gerar:active { transform:translateY(0); }
+
+  /* Input de data reutilizável nos relatórios */
+  .relatorio-date-input {
+    width:100%; padding:10px 14px;
+    border:2px solid var(--border); border-radius:12px;
+    font-family:'DM Mono',monospace; font-size:.95rem; color:var(--text);
+    background:#fff; outline:none; transition:border-color .2s;
+  }
+  .relatorio-date-input:focus { border-color:#1565c0; }
 
   footer { text-align:center; padding:2rem; font-size:.72rem; color:var(--text-muted); font-family:'DM Mono',monospace; }
   .btn-pdf { display:inline-block; margin-top:1rem; padding:10px 28px; background:var(--verde-mid); color:#fff; border-radius:20px; text-decoration:none; font-family:'Syne',sans-serif; font-weight:700; font-size:.85rem; letter-spacing:.05em; transition:background .2s; }
@@ -186,7 +193,7 @@
     </div>
   </div>
 
-  <!-- THINGSPEAK — sem alteração -->
+  <!-- THINGSPEAK -->
   <div class="section-title">Gráficos Históricos</div>
   <div class="graficos-card">
     <div class="graficos-toolbar">
@@ -211,7 +218,7 @@
     </div>
   </div>
 
-  <!-- GRAFANA — botões de acesso direto -->
+  <!-- GRAFANA -->
   <div class="section-title">Dashboards Grafana</div>
   <div class="graficos-card">
     <div class="graficos-toolbar">
@@ -255,11 +262,11 @@
         </p>
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:.5rem;">
           <label style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);">📅 Data Inicial</label>
-          <input type="date" id="data-inicio" style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:12px;font-family:'DM Mono',monospace;font-size:.95rem;color:var(--text);background:#fff;outline:none;">
+          <input type="date" id="data-inicio" class="relatorio-date-input">
         </div>
         <div style="display:flex;flex-direction:column;gap:8px;">
           <label style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);">📅 Data Final</label>
-          <input type="date" id="data-fim" style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:12px;font-family:'DM Mono',monospace;font-size:.95rem;color:var(--text);background:#fff;outline:none;">
+          <input type="date" id="data-fim" class="relatorio-date-input">
         </div>
         <button onclick="gerarRelatorio()"
           style="margin-top:.5rem;padding:11px 0;background:var(--verde-mid);color:#fff;border:none;border-radius:20px;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.05em;cursor:pointer;transition:background .2s;width:100%;"
@@ -268,20 +275,27 @@
         </button>
       </div>
 
-      <!-- OFICIAL -->
+      <!-- OFICIAL ANVISA — agora com seletor de período -->
       <div class="grafico-item" style="display:flex;flex-direction:column;gap:1rem;padding:1.5rem 2rem 2rem;">
         <h4>📄 Relatório Oficial ANVISA</h4>
         <p style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--text-muted);line-height:1.6;">
           Documento oficial gerado automaticamente pela planilha de registro. Formato padronizado para <strong>arquivamento</strong> e apresentação a autoridades sanitárias em caso de fiscalização ou auditoria.
         </p>
-        <div style="flex:1;display:flex;align-items:flex-end;">
-          <a href="https://docs.google.com/spreadsheets/d/1gS-HOohmfPVEGsE29R4RlM3_QJOslYkBJW5u4pDAcMU/export?format=pdf&gid=110458944&landscape=true&fitw=true&gridlines=false"
-            target="_blank"
-            style="display:block;width:100%;padding:11px 0;background:#1565c0;color:#fff;border-radius:20px;text-decoration:none;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.05em;text-align:center;transition:background .2s;"
-            onmouseover="this.style.background='#0d47a1'" onmouseout="this.style.background='#1565c0'">
-            📄 Baixar Relatório Oficial PDF
-          </a>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:.5rem;">
+          <label style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);">📅 Data Inicial</label>
+          <input type="date" id="anvisa-inicio" class="relatorio-date-input" style="border-color:#bbdefb;"
+            onfocus="this.style.borderColor='#1565c0'" onblur="this.style.borderColor='#bbdefb'">
         </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);">📅 Data Final</label>
+          <input type="date" id="anvisa-fim" class="relatorio-date-input" style="border-color:#bbdefb;"
+            onfocus="this.style.borderColor='#1565c0'" onblur="this.style.borderColor='#bbdefb'">
+        </div>
+        <button onclick="baixarRelatorioOficial()"
+          style="margin-top:.5rem;padding:11px 0;background:#1565c0;color:#fff;border:none;border-radius:20px;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.05em;cursor:pointer;transition:background .2s;width:100%;"
+          onmouseover="this.style.background='#0d47a1'" onmouseout="this.style.background='#1565c0'">
+          📄 Baixar Relatório Oficial PDF
+        </button>
       </div>
 
     </div>
@@ -308,12 +322,22 @@ window.onload = () => {
   };
   const hoje    = new Date();
   const hojeStr = fmt(hoje);
+
+  // Relatório Analítico
   document.getElementById('data-inicio').max = hojeStr;
   document.getElementById('data-fim').max    = hojeStr;
   document.getElementById('data-fim').value  = hojeStr;
   const ini = new Date();
   ini.setDate(ini.getDate()-7);
   document.getElementById('data-inicio').value = fmt(ini);
+
+  // Relatório Oficial ANVISA — mesmo padrão: últimos 7 dias
+  document.getElementById('anvisa-inicio').max = hojeStr;
+  document.getElementById('anvisa-fim').max    = hojeStr;
+  document.getElementById('anvisa-fim').value  = hojeStr;
+  const iniA = new Date();
+  iniA.setDate(iniA.getDate()-7);
+  document.getElementById('anvisa-inicio').value = fmt(iniA);
 };
 
 function gerarRelatorio(){
@@ -321,6 +345,15 @@ function gerarRelatorio(){
   const fim = document.getElementById('data-fim').value;
   if(!ini||!fim){ alert('Selecione as duas datas!'); return; }
   window.open(`relatorio.html?inicio=${ini}&fim=${fim}`, '_blank');
+}
+
+function baixarRelatorioOficial(){
+  const ini = document.getElementById('anvisa-inicio').value;
+  const fim = document.getElementById('anvisa-fim').value;
+  if(!ini||!fim){ alert('Selecione as duas datas!'); return; }
+  // Passa as datas como parâmetros na URL do Google Sheets PDF
+  const url = `https://docs.google.com/spreadsheets/d/1gS-HOohmfPVEGsE29R4RlM3_QJOslYkBJW5u4pDAcMU/export?format=pdf&gid=110458944&landscape=true&fitw=true&gridlines=false&ir=false&ic=false&r1=0&c1=0&fecha_inicio=${ini}&fecha_fin=${fim}`;
+  window.open(url, '_blank');
 }
 
 function mudarPeriodo(results,btn){
