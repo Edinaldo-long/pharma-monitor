@@ -90,6 +90,13 @@
   .relatorio-date-input:focus { border-color:var(--verde-mid); }
   .relatorio-date-input.azul:focus { border-color:#1565c0; }
 
+  .info-mes {
+    display:flex; align-items:flex-start; gap:8px;
+    background:#e3f2fd; border:1.5px solid #90caf9; border-radius:10px;
+    padding:10px 14px; font-family:'DM Mono',monospace; font-size:.73rem;
+    color:#1565c0; line-height:1.5;
+  }
+
   footer { text-align:center; padding:2rem; font-size:.72rem; color:var(--text-muted); font-family:'DM Mono',monospace; }
   .loading { font-family:'DM Mono',monospace; font-size:1.2rem; color:var(--text-muted); animation:blink 1s infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
@@ -253,6 +260,12 @@
         <p style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--text-muted);line-height:1.6;">
           Documento oficial gerado automaticamente pela planilha de registro. Formato padronizado para <strong>arquivamento</strong> e apresentação a autoridades sanitárias em caso de fiscalização ou auditoria.
         </p>
+
+        <!-- Aviso de um mês por vez -->
+        <div class="info-mes">
+          📋 <span>Gerado <strong>um mês por vez</strong>. Selecione datas dentro do mesmo mês.<br>Para múltiplos meses, gere um relatório por período.</span>
+        </div>
+
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:.5rem;">
           <label style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);">📅 Data Inicial</label>
           <input type="date" id="anvisa-inicio" class="relatorio-date-input azul">
@@ -286,8 +299,6 @@ const CHANNEL = '3196550';
 const API_KEY = '6HM2HMXBNJP32QOC';
 const TMIN = 15, TMAX = 25, UMIN = 40, UMAX = 70;
 
-// ⚠️ Cole aqui a URL do seu Web App do Apps Script
-// Apps Script → Implantar → Gerenciar implantações → copiar URL
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkB9CVO63wmkUmtEDGlJ-m8x_u0SFCKE-VSgDxrz8RcPrItt7OeMjrxgJ6f2xZs2wJ/exec';
 
 // ============================================================
@@ -336,11 +347,7 @@ function gerarRelatorio() {
 }
 
 // ============================================================
-// RELATÓRIO OFICIAL ANVISA — via JSONP
-// JSONP é a única técnica que funciona com Apps Script + GitHub
-// Pages sem configuração extra. Injeta uma tag <script> que
-// chama o Apps Script com ?callback=fn — ele responde com
-// fn({ok:true, url:'...'}) que o browser executa diretamente.
+// RELATÓRIO OFICIAL ANVISA — via JSONP, um mês por vez
 // ============================================================
 function baixarRelatorioOficial() {
   const ini = document.getElementById('anvisa-inicio').value;
@@ -351,17 +358,21 @@ function baixarRelatorioOficial() {
     return;
   }
 
-
+  // Validação: apenas datas do mesmo mês
+  const [anoI, mesI] = ini.split('-');
+  const [anoF, mesF] = fim.split('-');
+  if (anoI !== anoF || mesI !== mesF) {
+    alert('📋 O Relatório Oficial é gerado um mês por vez.\n\nSelecione datas dentro do mesmo mês.\n\nExemplo:\n• 01/03/2026 até 31/03/2026 → Março\n• 01/02/2026 até 28/02/2026 → Fevereiro');
+    return;
+  }
 
   const btn = document.getElementById('btn-anvisa');
   btn.innerHTML        = '⏳ Gerando PDF...';
   btn.disabled         = true;
   btn.style.background = '#546e7a';
 
-  // Nome único para o callback JSONP desta chamada
   const cbName = 'jsonpCb_' + Date.now();
 
-  // Timeout de segurança — 10 segundos
   const timeout = setTimeout(() => {
     delete window[cbName];
     document.getElementById('jsonp-script')?.remove();
@@ -371,7 +382,6 @@ function baixarRelatorioOficial() {
     alert('Tempo esgotado. Verifique se o Apps Script está implantado corretamente.');
   }, 10000);
 
-  // Callback que o Apps Script vai chamar com o resultado
   window[cbName] = function(json) {
     clearTimeout(timeout);
     delete window[cbName];
@@ -387,7 +397,6 @@ function baixarRelatorioOficial() {
     }
   };
 
-  // Injeta tag <script> que chama o Apps Script com o callback
   const script = document.createElement('script');
   script.id  = 'jsonp-script';
   script.src = APPS_SCRIPT_URL + '?acao=pdf&inicio=' + ini + '&fim=' + fim + '&callback=' + cbName;
