@@ -351,12 +351,7 @@ function baixarRelatorioOficial() {
     return;
   }
 
-  const [anoI, mesI] = ini.split('-');
-  const [anoF, mesF] = fim.split('-');
-  if (anoI !== anoF || mesI !== mesF) {
-    alert('⚠️ O Relatório Oficial cobre um mês por vez.\nSelecione datas dentro do mesmo mês.');
-    return;
-  }
+
 
   const btn = document.getElementById('btn-anvisa');
   btn.innerHTML        = '⏳ Gerando PDF...';
