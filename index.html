@@ -344,11 +344,9 @@ function gerarRelatorio() {
 }
 
 // ============================================================
-// RELATÓRIO OFICIAL ANVISA
-// Abre o Apps Script direto — ele redireciona para o PDF.
-// Muito mais rápido que JSONP.
+// RELATÓRIO OFICIAL ANVISA — abre PDF direto sem página intermediária
 // ============================================================
-function baixarRelatorioOficial() {
+async function baixarRelatorioOficial() {
   const ini = document.getElementById('anvisa-inicio').value;
   const fim = document.getElementById('anvisa-fim').value;
 
@@ -364,8 +362,25 @@ function baixarRelatorioOficial() {
     return;
   }
 
-  // Abre o Apps Script direto — ele redireciona para o PDF automaticamente
-  window.open(APPS_SCRIPT_URL + '?acao=pdf&inicio=' + ini + '&fim=' + fim, '_blank');
+  const btn = document.getElementById('btn-anvisa');
+  btn.disabled = true;
+  btn.textContent = '⏳ Gerando PDF...';
+
+  try {
+    const resp = await fetch(APPS_SCRIPT_URL + '?acao=pdf&inicio=' + ini + '&fim=' + fim);
+    const data = await resp.json();
+
+    if (data.ok) {
+      window.open(data.url, '_blank');
+    } else {
+      alert('❌ Erro: ' + data.erro);
+    }
+  } catch(e) {
+    alert('❌ Erro ao conectar com o servidor. Tente novamente.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '📄 Baixar Relatório Oficial PDF';
+  }
 }
 
 // ============================================================
