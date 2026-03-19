@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vansan Therm — Monitor Laboratorial</title>
+<title>Relatório — Vansan Therm</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -32,85 +32,186 @@
   .header-title { display:flex; flex-direction:column; align-items:flex-end; }
   .header-title span:first-child { font-size:.7rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--verde-light); }
   .header-title span:last-child { font-family:'DM Mono',monospace; font-size:.65rem; color:rgba(255,255,255,.5); }
-  .status-badge { display:flex; align-items:center; gap:6px; background:rgba(76,175,80,.15); border:1px solid rgba(76,175,80,.3); border-radius:20px; padding:5px 14px; font-family:'DM Mono',monospace; font-size:.72rem; color:var(--verde-light); }
-  .dot { width:7px; height:7px; border-radius:50%; background:var(--verde-light); animation:pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
+  .btn-voltar { display:flex; align-items:center; gap:6px; padding:5px 14px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); border-radius:20px; color:rgba(255,255,255,.75); font-family:'DM Mono',monospace; font-size:.72rem; text-decoration:none; transition:all .15s; }
+  .btn-voltar:hover { background:rgba(255,255,255,.18); color:#fff; }
 
-  main { max-width:1100px; margin:0 auto; padding:2rem 1.5rem; display:grid; gap:1.5rem; }
-
-  .anvisa-banner { background:var(--card); border:2px solid var(--border); border-radius:16px; padding:1rem 1.5rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
-  .anvisa-banner .label { font-size:.68rem; font-weight:700; letter-spacing:.1em; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; }
-  .status-pill { padding:6px 18px; border-radius:20px; font-size:.85rem; font-weight:700; letter-spacing:.04em; }
-  .status-ok     { background:#e8f5e9; color:#1b5e20; border:1.5px solid #4caf50; }
-  .status-alerta { background:#fff8e1; color:#e65100; border:1.5px solid #f9a825; }
-  .status-critico{ background:#ffebee; color:#c62828; border:1.5px solid #ef5350; }
-  .anvisa-limits { font-family:'DM Mono',monospace; font-size:.78rem; color:var(--text-muted); display:flex; gap:1.5rem; flex-wrap:wrap; }
+  main { max-width:1200px; margin:0 auto; padding:2rem 1.5rem; display:grid; gap:1.5rem; }
 
   .section-title { font-size:.7rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); display:flex; align-items:center; gap:8px; }
   .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
 
-  .cards-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
-  .sensor-card { background:var(--card); border:2px solid var(--border); border-radius:20px; padding:1.5rem; position:relative; overflow:hidden; transition:transform .2s,box-shadow .2s; }
-  .sensor-card:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,0,0,.08); }
-  .sensor-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:var(--verde-mid); border-radius:20px 20px 0 0; }
-  .sensor-card.alerta::before  { background:var(--amarelo); }
-  .sensor-card.critico::before { background:var(--vermelho); }
-  .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
-  .card-title { font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); }
-  .card-icon { font-size:1.4rem; }
-  .valor-atual { font-family:'DM Mono',monospace; font-size:3.5rem; font-weight:500; color:var(--verde); line-height:1; margin-bottom:.5rem; }
-  .valor-atual.alerta  { color:#e65100; }
-  .valor-atual.critico { color:var(--vermelho); }
-  .valor-unidade { font-size:1.5rem; font-weight:400; color:var(--text-muted); }
-  .progress-bar-wrap { margin-top:1rem; }
-  .progress-bar-label { display:flex; justify-content:space-between; font-size:.65rem; color:var(--text-muted); margin-bottom:4px; font-family:'DM Mono',monospace; }
-  .progress-bar-bg { height:6px; background:var(--verde-pale); border-radius:3px; overflow:hidden; }
-  .progress-bar-fill { height:100%; border-radius:3px; background:var(--verde-mid); transition:width .8s ease; }
-  .progress-bar-fill.alerta  { background:var(--amarelo); }
-  .progress-bar-fill.critico { background:var(--vermelho); }
-  .minmax-row { display:flex; gap:1rem; margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border); }
-  .minmax-item { flex:1; text-align:center; }
-  .minmax-label { font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:2px; }
-  .minmax-valor { font-family:'DM Mono',monospace; font-size:1.1rem; font-weight:500; }
-
-  .graficos-card { background:var(--card); border:2px solid var(--border); border-radius:16px; overflow:hidden; }
-  .graficos-toolbar { padding:1rem 1.5rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.75rem; background:#fafcfa; }
-  .graficos-toolbar h3 { font-size:.72rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); }
-  .periodo-btns { display:flex; gap:6px; flex-wrap:wrap; }
-  .periodo-btn { padding:5px 14px; border-radius:20px; border:1.5px solid var(--border); background:#fff; font-family:'Syne',sans-serif; font-size:.75rem; font-weight:600; color:var(--text-muted); cursor:pointer; transition:all .15s; }
-  .periodo-btn:hover { border-color:var(--verde-mid); color:var(--verde-mid); }
-  .periodo-btn.ativo { background:var(--verde-mid); border-color:var(--verde-mid); color:#fff; }
-  .graficos-grid { display:grid; grid-template-columns:1fr 1fr; }
-  .grafico-item { padding:1rem 1.5rem 1.5rem; }
-  .grafico-item:first-child { border-right:1px solid var(--border); }
-  .grafico-item h4 { font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); margin-bottom:.75rem; }
-  .grafico-item iframe { width:100%; height:250px; border:none; border-radius:8px; display:block; }
-
-  .relatorio-date-input {
-    width:100%; padding:10px 14px;
-    border:2px solid var(--border); border-radius:12px;
-    font-family:'DM Mono',monospace; font-size:.95rem; color:var(--text);
-    background:#fff; outline:none; transition:border-color .2s;
+  .historico-card { background:var(--card); border:2px solid var(--border); border-radius:16px; overflow:hidden; }
+  .historico-toolbar {
+    padding:1rem 1.5rem; border-bottom:1px solid var(--border); background:#fafcfa;
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.75rem;
   }
-  .relatorio-date-input:focus { border-color:var(--verde-mid); }
-  .relatorio-date-input.azul:focus { border-color:#1565c0; }
+  .historico-toolbar-info { display:flex; flex-direction:column; gap:3px; }
+  .historico-toolbar-info .titulo { font-size:.72rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); }
+  .historico-toolbar-info .periodo { font-family:'DM Mono',monospace; font-size:.75rem; color:var(--verde-mid); }
+  .btn-imprimir {
+    display:flex; align-items:center; gap:6px;
+    padding:5px 16px; background:var(--verde-mid); color:#fff;
+    border:none; border-radius:20px;
+    font-family:'Syne',sans-serif; font-weight:700; font-size:.75rem;
+    cursor:pointer; transition:background .2s;
+  }
+  .btn-imprimir:hover { background:var(--verde); }
 
-  .info-mes {
-    display:flex; align-items:flex-start; gap:8px;
-    background:#e3f2fd; border:1.5px solid #90caf9; border-radius:10px;
-    padding:10px 14px; font-family:'DM Mono',monospace; font-size:.73rem;
-    color:#1565c0; line-height:1.5;
+  .historico-scroll { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; font-size:.84rem; }
+  thead th { background:var(--verde); color:#fff; padding:10px 14px; text-align:center; font-size:.7rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+  tbody tr:nth-child(even) { background:var(--verde-pale); }
+  tbody tr:hover { background:#d0ead0; }
+  tbody td { padding:9px 14px; text-align:center; font-family:'DM Mono',monospace; font-size:.8rem; border-bottom:1px solid var(--border); }
+  .td-ok     { color:var(--verde-mid); font-weight:500; }
+  .td-critico{ color:var(--vermelho); font-weight:700; }
+  .tag-ok   { background:#e8f5e9; color:#1b5e20; padding:2px 10px; border-radius:10px; font-size:.68rem; font-weight:700; }
+  .tag-fora { background:#ffebee; color:#c62828; padding:2px 10px; border-radius:10px; font-size:.68rem; font-weight:700; }
+
+  /* ─── RESUMO CARDS ─── */
+  .resumo-grid {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1.5rem;
+    margin-bottom:1.5rem;
   }
 
-  footer { text-align:center; padding:2rem; font-size:.72rem; color:var(--text-muted); font-family:'DM Mono',monospace; }
+  .resumo-card {
+    background:var(--card);
+    border:2px solid var(--border);
+    border-radius:16px;
+    padding:1.4rem 1rem 1.2rem;
+    text-align:center;
+    position:relative;
+    cursor:help;
+  }
+  .resumo-card::before {
+    content:''; position:absolute; top:0; left:0; right:0;
+    height:4px; background:var(--verde-mid); border-radius:16px 16px 0 0;
+  }
+  .resumo-card.alerta::before  { background:var(--amarelo); }
+  .resumo-card.critico::before { background:var(--vermelho); }
+
+  .resumo-label { font-size:.62rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; }
+  .resumo-valor { font-family:'DM Mono',monospace; font-size:2rem; font-weight:500; color:var(--verde); line-height:1; margin-bottom:6px; }
+  .resumo-valor.alerta  { color:var(--amarelo); }
+  .resumo-valor.critico { color:var(--vermelho); }
+  .resumo-status { font-size:.68rem; font-weight:700; letter-spacing:.06em; margin-top:4px; }
+
+  .limite-ref {
+    margin-top:8px;
+    font-family:'DM Mono',monospace;
+    font-size:.68rem;
+    color:var(--text-muted);
+    letter-spacing:.02em;
+  }
+
+  /* ─── ESCALA DE AMPLITUDE ─── (melhorada) */
+  .amp-escala {
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    margin-top:12px;
+    padding:10px;
+    background:#f5f9f5;
+    border-radius:10px;
+    border:1px solid var(--border);
+  }
+  .amp-tag {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-size:.72rem;
+    font-weight:700;
+    padding:5px 10px;
+    border-radius:8px;
+    letter-spacing:.02em;
+    opacity:.55;
+    transition:opacity .2s, transform .2s;
+  }
+  .amp-tag .amp-label { flex:1; text-align:left; }
+  .amp-tag .amp-range { font-family:'DM Mono',monospace; font-size:.68rem; opacity:.85; }
+
+  .amp-tag.ok      { background:#e8f5e9; color:#1b5e20; }
+  .amp-tag.alerta  { background:#fff8e1; color:#e65100; }
+  .amp-tag.critico { background:#ffebee; color:#c62828; }
+
+  /* estado ativo — fica destacado */
+  .amp-tag.ativo {
+    opacity:1;
+    transform:scale(1.03);
+    outline:2px solid currentColor;
+    outline-offset:1px;
+  }
+
+  /* ─── TOOLTIP ─── */
+  .tooltip {
+    visibility:hidden; opacity:0;
+    position:absolute;
+    top:calc(100% + 12px);
+    left:50%;
+    transform:translateX(-50%);
+    background:#1a2a1a; color:#fff;
+    font-family:'DM Mono',monospace; font-size:.72rem;
+    line-height:1.6; padding:10px 14px; border-radius:10px;
+    width:230px; text-align:left;
+    z-index:9999;
+    box-shadow:0 4px 16px rgba(0,0,0,.35);
+    transition:opacity .2s, visibility .2s;
+    pointer-events:none;
+  }
+  .tooltip::after {
+    content:''; position:absolute;
+    bottom:100%; left:50%;
+    transform:translateX(-50%);
+    border:6px solid transparent;
+    border-bottom-color:#1a2a1a;
+  }
+
+  .resumo-card.tooltip-right .tooltip {
+    top:50%;
+    left:auto;
+    right:calc(100% + 12px);
+    transform:translateY(-50%);
+  }
+  .resumo-card.tooltip-right .tooltip::after {
+    bottom:auto;
+    top:50%;
+    left:100%;
+    transform:translateY(-50%);
+    border-bottom-color:transparent;
+    border-left-color:#1a2a1a;
+  }
+
+  .resumo-card:hover .tooltip { visibility:visible; opacity:1; }
+
+  .estado { padding:2.5rem; text-align:center; color:var(--text-muted); font-family:'DM Mono',monospace; }
   .loading { font-family:'DM Mono',monospace; font-size:1.2rem; color:var(--text-muted); animation:blink 1s infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
+  footer { text-align:center; padding:2rem; font-size:.72rem; color:var(--text-muted); font-family:'DM Mono',monospace; }
+
+  @media print {
+    header, footer, .btn-imprimir, .btn-voltar { display:none !important; }
+    body { background:#fff; }
+    main { padding:0; max-width:100%; }
+    .tooltip { display:none !important; }
+  }
   @media (max-width:700px) {
-    .cards-grid,.graficos-grid { grid-template-columns:1fr; }
-    .grafico-item:first-child { border-right:none; border-bottom:1px solid var(--border); }
-    .header-name small { display:none; }
+    .resumo-grid { grid-template-columns:1fr 1fr; }
+    .header-logo { height:44px; }
     .header-title { display:none; }
+    .resumo-card.tooltip-right .tooltip {
+      right:auto; left:50%;
+      bottom:calc(100% + 12px);
+      transform:translateX(-50%);
+    }
+    .resumo-card.tooltip-right .tooltip::after {
+      left:50%; top:100%;
+      transform:translateX(-50%);
+      border-left-color:transparent;
+      border-top-color:#1a2a1a;
+    }
   }
 </style>
 </head>
@@ -127,345 +228,222 @@
   </div>
   <div class="header-right">
     <div class="header-title">
-      <span>Monitor Laboratorial</span>
-      <span id="ultima-atualizacao">Carregando...</span>
+      <span>Histórico de Leituras</span>
+      <span id="header-periodo">–</span>
     </div>
-    <div class="status-badge"><div class="dot"></div>AO VIVO</div>
+    <a class="btn-voltar" href="index.html">← Voltar ao Monitor</a>
   </div>
 </header>
 
 <main>
 
-  <div class="anvisa-banner">
-    <div>
-      <div class="label">Status ANVISA RDC 301 — Laboratório</div>
-      <div id="anvisa-pill" class="status-pill status-ok">✓ DENTRO DOS LIMITES</div>
+  <!-- RESUMO ANALÍTICO -->
+  <div class="section-title">Resumo do Período</div>
+  <div class="resumo-grid">
+
+    <!-- Card 1 — tooltip abre para baixo -->
+    <div class="resumo-card" id="card-tmed">
+      <div class="tooltip">Média de todas as leituras de temperatura do período. Valores acima de 25°C aceleram reações de degradação química, reduzem a potência de antibióticos e hormônios, e favorecem o crescimento de microrganismos. Abaixo de 15°C podem ocorrer cristalização de soluções e desnaturação de proteínas em biológicos.</div>
+      <div class="resumo-label">🌡️ Temp. Média</div>
+      <div class="resumo-valor" id="res-tmed"><span class="loading">···</span></div>
+      <div class="resumo-status" id="res-tmed-st"></div>
+      <div class="limite-ref">Limite ANVISA: 15°C – 25°C</div>
     </div>
-    <div class="anvisa-limits">
-      <span>🌡️ Temperatura: 15°C – 25°C</span>
-      <span>💧 Umidade: 40% – 70%</span>
+
+    <!-- Card 2 — tooltip abre para baixo -->
+    <div class="resumo-card" id="card-umed">
+      <div class="tooltip">Média de todas as leituras de umidade no período. Umidade alta favorece mofo e degradação de cápsulas e comprimidos. Umidade baixa resseca embalagens e pós.</div>
+      <div class="resumo-label">💧 Umid. Média</div>
+      <div class="resumo-valor" id="res-umed"><span class="loading">···</span></div>
+      <div class="resumo-status" id="res-umed-st"></div>
+      <div class="limite-ref">Limite ANVISA: 40% – 70%</div>
     </div>
+
+    <!-- Card 3 — tooltip-right para evitar corte -->
+    <div class="resumo-card tooltip-right" id="card-hfora">
+      <div class="tooltip">Quantidade de leituras em que temperatura ou umidade estavam fora dos limites ANVISA RDC 301. Cada leitura representa ~5 min de monitoramento.</div>
+      <div class="resumo-label">⚠️ Leituras Fora</div>
+      <div class="resumo-valor" id="res-hfora"><span class="loading">···</span></div>
+      <div class="resumo-status" id="res-hfora-st"></div>
+    </div>
+
+    <!-- Card 4 — tooltip-right para evitar corte -->
+    <div class="resumo-card tooltip-right" id="card-amp">
+      <div class="tooltip">Diferença entre a temperatura máxima e mínima registrada no período. Oscilações bruscas aceleram a proliferação de fungos e microrganismos, quebram princípios ativos, comprometem embalagens e podem causar condensação interna em frascos — mesmo que a temperatura média pareça aceitável. Quanto menor a variação, maior a segurança do estoque.</div>
+      <div class="resumo-label">📈 Amplitude Térmica</div>
+      <div class="resumo-valor" id="res-amp"><span class="loading">···</span></div>
+      <div class="resumo-status" id="res-amp-st"></div>
+      <!-- Escala visual melhorada -->
+      <div class="amp-escala">
+        <div class="amp-tag ok" id="amp-tag-ok">
+          <span class="amp-label">✓ Estável</span>
+          <span class="amp-range">≤ 5°C</span>
+        </div>
+        <div class="amp-tag alerta" id="amp-tag-alerta">
+          <span class="amp-label">⚡ Moderada</span>
+          <span class="amp-range">≤ 8°C</span>
+        </div>
+        <div class="amp-tag critico" id="amp-tag-critico">
+          <span class="amp-label">⚠ Alta</span>
+          <span class="amp-range">&gt; 8°C</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <div class="section-title">Leitura em Tempo Real</div>
-  <div class="cards-grid">
-    <div class="sensor-card" id="card-temp">
-      <div class="card-header">
-        <div class="card-title">Temperatura</div>
-        <div class="card-icon">🌡️</div>
+  <!-- TABELA -->
+  <div class="historico-card">
+    <div class="historico-toolbar">
+      <div class="historico-toolbar-info">
+        <span class="titulo">📋 Histórico de Leituras</span>
+        <span class="periodo" id="periodo-texto">Carregando...</span>
       </div>
-      <div class="valor-atual" id="temp-atual"><span class="loading">···</span></div>
-      <div class="progress-bar-wrap">
-        <div class="progress-bar-label"><span>15°C (mín)</span><span id="temp-barra-label">–</span><span>25°C (máx)</span></div>
-        <div class="progress-bar-bg"><div class="progress-bar-fill" id="temp-barra" style="width:0%"></div></div>
-      </div>
-      <div class="minmax-row">
-        <div class="minmax-item"><div class="minmax-label">Mínima (24h)</div><div class="minmax-valor" id="temp-min">–</div></div>
-        <div class="minmax-item"><div class="minmax-label">Máxima (24h)</div><div class="minmax-valor" id="temp-max">–</div></div>
-      </div>
+      <button class="btn-imprimir" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
     </div>
-
-    <div class="sensor-card" id="card-umid">
-      <div class="card-header">
-        <div class="card-title">Umidade Relativa</div>
-        <div class="card-icon">💧</div>
-      </div>
-      <div class="valor-atual" id="umid-atual"><span class="loading">···</span></div>
-      <div class="progress-bar-wrap">
-        <div class="progress-bar-label"><span>40% (mín)</span><span id="umid-barra-label">–</span><span>70% (máx)</span></div>
-        <div class="progress-bar-bg"><div class="progress-bar-fill" id="umid-barra" style="width:0%"></div></div>
-      </div>
-      <div class="minmax-row">
-        <div class="minmax-item"><div class="minmax-label">Mínima (24h)</div><div class="minmax-valor" id="umid-min">–</div></div>
-        <div class="minmax-item"><div class="minmax-label">Máxima (24h)</div><div class="minmax-valor" id="umid-max">–</div></div>
-      </div>
+    <div class="historico-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Data / Hora</th>
+            <th>Temp. Atual</th>
+            <th>Temp. Mín</th>
+            <th>Temp. Máx</th>
+            <th>Umid. Atual</th>
+            <th>Umid. Mín</th>
+            <th>Umid. Máx</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-historico">
+          <tr><td colspan="8" class="estado"><span class="loading">···</span></td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
-
-  <!-- THINGSPEAK -->
-  <div class="section-title">Gráficos Históricos</div>
-  <div class="graficos-card">
-    <div class="graficos-toolbar">
-      <h3>📊 Selecione o período de visualização</h3>
-      <div class="periodo-btns">
-        <button class="periodo-btn ativo" onclick="mudarPeriodo(60,this)">1 hora</button>
-        <button class="periodo-btn" onclick="mudarPeriodo(288,this)">24 horas</button>
-        <button class="periodo-btn" onclick="mudarPeriodo(1008,this)">3 dias</button>
-        <button class="periodo-btn" onclick="mudarPeriodo(2016,this)">7 dias</button>
-        <button class="periodo-btn" onclick="mudarPeriodo(8640,this)">30 dias</button>
-      </div>
-    </div>
-    <div class="graficos-grid">
-      <div class="grafico-item">
-        <h4>🌡️ Temperatura (°C)</h4>
-        <iframe id="grafico-temp" src="" loading="lazy"></iframe>
-      </div>
-      <div class="grafico-item">
-        <h4>💧 Umidade Relativa (%)</h4>
-        <iframe id="grafico-umid" src="" loading="lazy"></iframe>
-      </div>
-    </div>
-  </div>
-
-  <!-- GRAFANA -->
-  <div class="section-title">Dashboards Grafana</div>
-  <div class="graficos-card">
-    <div class="graficos-toolbar">
-      <h3>📈 Painéis complementares — Grafana</h3>
-    </div>
-    <div class="graficos-grid">
-      <div class="grafico-item" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;">
-        <h4>🌡️ Temperatura</h4>
-        <p style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--text-muted);text-align:center;">Clique para abrir o painel completo de temperatura no Grafana</p>
-        <a href="https://esatakeu.grafana.net/public-dashboards/a19310195eec42ffb06b5072b6db2d4f" target="_blank"
-          style="display:inline-flex;align-items:center;gap:8px;padding:10px 28px;background:var(--verde-mid);color:#fff;border-radius:20px;text-decoration:none;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;transition:background .2s;"
-          onmouseover="this.style.background='#1b5e20'" onmouseout="this.style.background='#2e7d32'">
-          📊 Abrir Painel de Temperatura
-        </a>
-      </div>
-      <div class="grafico-item" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;">
-        <h4>💧 Umidade Relativa</h4>
-        <p style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--text-muted);text-align:center;">Clique para abrir o painel completo de umidade no Grafana</p>
-        <a href="https://esatakeu.grafana.net/public-dashboards/f6bd16c53b45416e92287fd22ccd2a7a" target="_blank"
-          style="display:inline-flex;align-items:center;gap:8px;padding:10px 28px;background:var(--verde-mid);color:#fff;border-radius:20px;text-decoration:none;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;transition:background .2s;"
-          onmouseover="this.style.background='#1b5e20'" onmouseout="this.style.background='#2e7d32'">
-          📊 Abrir Painel de Umidade
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <!-- RELATÓRIOS -->
-  <div class="section-title">Relatórios</div>
-  <div class="graficos-card">
-    <div class="graficos-toolbar">
-      <h3>📋 Tipos de Relatório</h3>
-    </div>
-    <div class="graficos-grid">
-
-      <!-- ANALÍTICO -->
-      <div class="grafico-item" style="display:flex;flex-direction:column;gap:1rem;padding:1.5rem 2rem 2rem;">
-        <h4>📊 Relatório Analítico</h4>
-        <p style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--text-muted);line-height:1.6;">
-          Consulta detalhada por período. Ideal para análise interna do farmacêutico — visualiza temperatura e umidade leitura a leitura, com indicação de conformidade ANVISA.
-        </p>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:.5rem;">
-          <label style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);">📅 Data Inicial</label>
-          <input type="date" id="data-inicio" class="relatorio-date-input">
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);">📅 Data Final</label>
-          <input type="date" id="data-fim" class="relatorio-date-input">
-        </div>
-        <button id="btn-analitico" onclick="gerarRelatorio()"
-          style="margin-top:.5rem;padding:11px 0;background:var(--verde-mid);color:#fff;border:none;border-radius:20px;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.05em;cursor:pointer;transition:background .2s;width:100%;"
-          onmouseover="if(!this.disabled)this.style.background='#1b5e20'" onmouseout="if(!this.disabled)this.style.background='#2e7d32'">
-          📊 Gerar Relatório Analítico
-        </button>
-      </div>
-
-      <!-- OFICIAL ANVISA -->
-      <div class="grafico-item" style="display:flex;flex-direction:column;gap:1rem;padding:1.5rem 2rem 2rem;">
-        <h4>📄 Relatório Oficial ANVISA</h4>
-        <p style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--text-muted);line-height:1.6;">
-          Documento oficial gerado automaticamente pela planilha de registro. Formato padronizado para <strong>arquivamento</strong> e apresentação a autoridades sanitárias em caso de fiscalização ou auditoria.
-        </p>
-
-        <div class="info-mes">
-          📋 <span>Gerado <strong>um mês por vez</strong>. Selecione datas dentro do mesmo mês.<br>Para múltiplos meses, gere um relatório por período.</span>
-        </div>
-
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:.5rem;">
-          <label style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);">📅 Data Inicial</label>
-          <input type="date" id="anvisa-inicio" class="relatorio-date-input azul">
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);">📅 Data Final</label>
-          <input type="date" id="anvisa-fim" class="relatorio-date-input azul">
-        </div>
-        <button id="btn-anvisa" onclick="baixarRelatorioOficial()"
-          style="margin-top:.5rem;padding:11px 0;background:#1565c0;color:#fff;border:none;border-radius:20px;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.05em;cursor:pointer;transition:background .2s;width:100%;"
-          onmouseover="if(!this.disabled)this.style.background='#0d47a1'" onmouseout="if(!this.disabled)this.style.background='#1565c0'">
-          📄 Baixar Relatório Oficial PDF
-        </button>
-      </div>
-
-    </div>
-  </div>
-
 </main>
 
 <footer>
   Vansan Therm · ANVISA RDC 301 · Laboratório · Responsável: Edinado Santos de Almeida<br>
-  Canal ThingSpeak: 3196550 · Atualização automática a cada 60 segundos
+  Limites ANVISA: Temperatura 15°C – 25°C | Umidade Relativa 40% – 70%
 </footer>
 
 <script>
-const CHANNEL = '3196550';
-const API_KEY = '6HM2HMXBNJP32QOC';
-const TMIN = 15, TMAX = 25, UMIN = 40, UMAX = 70;
+const CHANNEL='3196550', API_KEY='6HM2HMXBNJP32QOC';
+const TMIN=15,TMAX=25,UMIN=40,UMAX=70;
 
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkB9CVO63wmkUmtEDGlJ-m8x_u0SFCKE-VSgDxrz8RcPrItt7OeMjrxgJ6f2xZs2wJ/exec';
-
-window.onload = () => {
-  const fmt = d => {
-    const y   = d.getFullYear();
-    const m   = String(d.getMonth() + 1).padStart(2, '0');
-    const dia = String(d.getDate()).padStart(2, '0');
-    return `${y}-${m}-${dia}`;
-  };
-
-  const hoje        = new Date();
-  const hojeStr     = fmt(hoje);
-  const seteDias    = new Date(); seteDias.setDate(seteDias.getDate() - 7);
-  const primeiroDia = fmt(new Date(hoje.getFullYear(), hoje.getMonth(), 1));
-
-  document.getElementById('data-inicio').max   = hojeStr;
-  document.getElementById('data-fim').max      = hojeStr;
-  document.getElementById('data-inicio').value = fmt(seteDias);
-  document.getElementById('data-fim').value    = hojeStr;
-
-  document.getElementById('anvisa-inicio').max   = hojeStr;
-  document.getElementById('anvisa-fim').max      = hojeStr;
-  document.getElementById('anvisa-inicio').value = primeiroDia;
-  document.getElementById('anvisa-fim').value    = hojeStr;
-
-  atualizarGraficos(60);
-  atualizarTempoReal();
-  atualizarMinMax();
-  setInterval(atualizarTempoReal, 60000);
-  setInterval(atualizarMinMax, 60000);
-};
-
-function gerarRelatorio() {
-  const ini = document.getElementById('data-inicio').value;
-  const fim = document.getElementById('data-fim').value;
-  if (!ini || !fim) { alert('Selecione as duas datas!'); return; }
-  window.open(`relatorio.html?inicio=${ini}&fim=${fim}`, '_blank');
+function tOk(v){ return v>=TMIN&&v<=TMAX; }
+function uOk(v){ return v>=UMIN&&v<=UMAX; }
+function fmtDH(iso){
+  const d=new Date(iso);
+  return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 }
+function fmtDataBR(str){ const [y,m,d]=str.split('-'); return `${d}/${m}/${y}`; }
 
-function baixarRelatorioOficial() {
-  const ini = document.getElementById('anvisa-inicio').value;
-  const fim = document.getElementById('anvisa-fim').value;
+async function carregar(){
+  const params = new URLSearchParams(window.location.search);
+  const inicio = params.get('inicio');
+  const fim    = params.get('fim');
+  const tbody  = document.getElementById('tabela-historico');
 
-  if (!ini || !fim) { alert('Selecione as duas datas!'); return; }
-
-  const [anoI, mesI] = ini.split('-');
-  const [anoF, mesF] = fim.split('-');
-  if (anoI !== anoF || mesI !== mesF) {
-    alert('📋 O Relatório Oficial é gerado um mês por vez.\n\nSelecione datas dentro do mesmo mês.\n\nExemplo:\n• 01/03/2026 até 31/03/2026 → Março\n• 01/02/2026 até 28/02/2026 → Fevereiro');
+  if(!inicio||!fim){
+    tbody.innerHTML='<tr><td colspan="8" class="estado">Parâmetros inválidos. Volte e selecione o período.</td></tr>';
     return;
   }
 
-  const btn = document.getElementById('btn-anvisa');
-  btn.disabled = true;
-  btn.textContent = '⏳ Gerando PDF...';
+  const periodoStr = `Período: ${fmtDataBR(inicio)} a ${fmtDataBR(fim)}`;
+  document.getElementById('periodo-texto').textContent  = periodoStr;
+  document.getElementById('header-periodo').textContent = periodoStr;
 
-  const cbName = 'jsonpCb_' + Date.now();
+  try{
+    const url=`https://api.thingspeak.com/channels/${CHANNEL}/feeds.json?api_key=${API_KEY}&start=${encodeURIComponent(inicio+'T00:00:00-03:00')}&end=${encodeURIComponent(fim+'T23:59:59-03:00')}&results=8000`;
+    const res   = await fetch(url);
+    const data  = await res.json();
+    const feeds = (data.feeds||[]).reverse();
 
-  const timeout = setTimeout(() => {
-    delete window[cbName];
-    const s = document.getElementById(cbName + '_script');
-    if (s) s.remove();
-    btn.disabled = false;
-    btn.textContent = '📄 Baixar Relatório Oficial PDF';
-    alert('❌ Tempo esgotado. Tente novamente.');
-  }, 15000);
-
-  window[cbName] = function(data) {
-    clearTimeout(timeout);
-    delete window[cbName];
-    const s = document.getElementById(cbName + '_script');
-    if (s) s.remove();
-    btn.disabled = false;
-    btn.textContent = '📄 Baixar Relatório Oficial PDF';
-    if (data.ok) { window.open(data.url, '_blank'); }
-    else { alert('❌ Erro: ' + data.erro); }
-  };
-
-  const script = document.createElement('script');
-  script.id  = cbName + '_script';
-  script.src = APPS_SCRIPT_URL + '?acao=pdf&inicio=' + ini + '&fim=' + fim + '&callback=' + cbName;
-  document.body.appendChild(script);
-}
-
-function mudarPeriodo(results, btn) {
-  document.querySelectorAll('.periodo-btn').forEach(b => b.classList.remove('ativo'));
-  btn.classList.add('ativo');
-  atualizarGraficos(results);
-}
-
-function atualizarGraficos(results) {
-  const base = `https://thingspeak.com/channels/${CHANNEL}/charts/`;
-  const p    = `?bgcolor=%23ffffff&dynamic=true&results=${results}&type=line&width=auto&height=240`;
-  document.getElementById('grafico-temp').src = base + `1${p}&color=%232e7d32&title=Temperatura&yaxis=°C`;
-  document.getElementById('grafico-umid').src = base + `2${p}&color=%231565c0&title=Umidade&yaxis=%25`;
-}
-
-function stT(v) { return (v < TMIN || v > TMAX) ? 'critico' : (v > TMAX - 2 || v < TMIN + 2) ? 'alerta' : 'ok'; }
-function stU(v) { return (v < UMIN || v > UMAX) ? 'critico' : (v > UMAX - 5 || v < UMIN + 5) ? 'alerta' : 'ok'; }
-function pct(v, mn, mx) { return Math.max(0, Math.min(100, ((v - mn) / (mx - mn)) * 100)); }
-
-async function atualizarTempoReal() {
-  try {
-    const r = await fetch(`https://api.thingspeak.com/channels/${CHANNEL}/feeds/last.json?api_key=${API_KEY}`);
-    const d = await r.json();
-    const t = parseFloat(d.field1), u = parseFloat(d.field2);
-
-    if (!isNaN(t)) {
-      const s = stT(t);
-      document.getElementById('temp-atual').innerHTML         = `${t.toFixed(1)}<span class="valor-unidade">°C</span>`;
-      document.getElementById('temp-atual').className         = `valor-atual ${s !== 'ok' ? s : ''}`;
-      document.getElementById('card-temp').className          = `sensor-card ${s !== 'ok' ? s : ''}`;
-      document.getElementById('temp-barra').style.width       = pct(t, TMIN, TMAX) + '%';
-      document.getElementById('temp-barra').className         = `progress-bar-fill ${s !== 'ok' ? s : ''}`;
-      document.getElementById('temp-barra-label').textContent = t.toFixed(1) + '°C';
+    if(!feeds.length){
+      tbody.innerHTML='<tr><td colspan="8" class="estado">Nenhum dado encontrado para o período selecionado.</td></tr>';
+      return;
     }
 
-    if (!isNaN(u)) {
-      const s = stU(u);
-      document.getElementById('umid-atual').innerHTML         = `${u.toFixed(1)}<span class="valor-unidade">%</span>`;
-      document.getElementById('umid-atual').className         = `valor-atual ${s !== 'ok' ? s : ''}`;
-      document.getElementById('card-umid').className          = `sensor-card ${s !== 'ok' ? s : ''}`;
-      document.getElementById('umid-barra').style.width       = pct(u, UMIN, UMAX) + '%';
-      document.getElementById('umid-barra').className         = `progress-bar-fill ${s !== 'ok' ? s : ''}`;
-      document.getElementById('umid-barra-label').textContent = u.toFixed(1) + '%';
+    const ts  = feeds.map(f=>parseFloat(f.field1)).filter(v=>!isNaN(v));
+    const hs  = feeds.map(f=>parseFloat(f.field2)).filter(v=>!isNaN(v));
+    const tMn = ts.length?Math.min(...ts):null;
+    const tMx = ts.length?Math.max(...ts):null;
+    const uMn = hs.length?Math.min(...hs):null;
+    const uMx = hs.length?Math.max(...hs):null;
+
+    // === RESUMO ANALÍTICO ===
+    const tMed = ts.length ? ts.reduce((a,b)=>a+b,0)/ts.length : null;
+    const uMed = hs.length ? hs.reduce((a,b)=>a+b,0)/hs.length : null;
+    const amp  = (tMn!==null&&tMx!==null) ? tMx-tMn : null;
+    const fora = feeds.filter(f=>{
+      const t=parseFloat(f.field1), u=parseFloat(f.field2);
+      return (!isNaN(t)&&(t<TMIN||t>TMAX)) || (!isNaN(u)&&(u<UMIN||u>UMAX));
+    }).length;
+    const pctFora = feeds.length ? ((fora/feeds.length)*100).toFixed(1) : 0;
+
+    // Temp média
+    if(tMed!==null){
+      const s=tMed<TMIN||tMed>TMAX?'critico':tMed>TMAX-2||tMed<TMIN+2?'alerta':'ok';
+      document.getElementById('res-tmed').innerHTML=`${tMed.toFixed(1)}<span class="resumo-unidade">°C</span>`;
+      document.getElementById('res-tmed').className=`resumo-valor ${s!='ok'?s:''}`;
+      document.getElementById('card-tmed').className=`resumo-card ${s!='ok'?s:''}`;
+      document.getElementById('res-tmed-st').innerHTML=s==='ok'?'<span style="color:#2e7d32">✓ Dentro do limite</span>':s==='alerta'?'<span style="color:#e65100">⚡ Próximo do limite</span>':'<span style="color:#c62828">⚠ Fora do limite</span>';
+    }
+    // Umid média
+    if(uMed!==null){
+      const s=uMed<UMIN||uMed>UMAX?'critico':uMed>UMAX-5||uMed<UMIN+5?'alerta':'ok';
+      document.getElementById('res-umed').innerHTML=`${uMed.toFixed(1)}<span class="resumo-unidade">%</span>`;
+      document.getElementById('res-umed').className=`resumo-valor ${s!='ok'?s:''}`;
+      document.getElementById('card-umed').className=`resumo-card ${s!='ok'?s:''}`;
+      document.getElementById('res-umed-st').innerHTML=s==='ok'?'<span style="color:#2e7d32">✓ Dentro do limite</span>':s==='alerta'?'<span style="color:#e65100">⚡ Próximo do limite</span>':'<span style="color:#c62828">⚠ Fora do limite</span>';
+    }
+    // Leituras fora
+    const sf=fora===0?'ok':pctFora>20?'critico':'alerta';
+    document.getElementById('res-hfora').innerHTML=`${fora}<span class="resumo-unidade"> / ${feeds.length}</span>`;
+    document.getElementById('res-hfora').className=`resumo-valor ${sf!='ok'?sf:''}`;
+    document.getElementById('card-hfora').className=`resumo-card tooltip-right ${sf!='ok'?sf:''}`;
+    document.getElementById('res-hfora-st').innerHTML=fora===0?'<span style="color:#2e7d32">✓ Nenhuma fora</span>':`<span style="color:${sf==='critico'?'#c62828':'#e65100'}">${pctFora}% das leituras</span>`;
+
+    // Amplitude térmica
+    if(amp!==null){
+      const sa=amp<=5?'ok':amp<=8?'alerta':'critico';
+      document.getElementById('res-amp').innerHTML=`${amp.toFixed(1)}<span class="resumo-unidade">°C</span>`;
+      document.getElementById('res-amp').className=`resumo-valor ${sa!='ok'?sa:''}`;
+      document.getElementById('card-amp').className=`resumo-card tooltip-right ${sa!='ok'?sa:''}`;
+      document.getElementById('res-amp-st').innerHTML=sa==='ok'?'<span style="color:#2e7d32">✓ Estável</span>':sa==='alerta'?'<span style="color:#e65100">⚡ Moderada</span>':'<span style="color:#c62828">⚠ Alta variação</span>';
+      // Destaca a tag ativa na escala
+      document.getElementById('amp-tag-ok').classList.toggle('ativo', sa==='ok');
+      document.getElementById('amp-tag-alerta').classList.toggle('ativo', sa==='alerta');
+      document.getElementById('amp-tag-critico').classList.toggle('ativo', sa==='critico');
     }
 
-    const pill = document.getElementById('anvisa-pill');
-    const st   = !isNaN(t) ? stT(t) : 'ok';
-    const su   = !isNaN(u) ? stU(u) : 'ok';
-    if (st === 'critico' || su === 'critico') {
-      pill.textContent = '⚠ FORA DOS LIMITES ANVISA'; pill.className = 'status-pill status-critico';
-    } else if (st === 'alerta' || su === 'alerta') {
-      pill.textContent = '⚡ ATENÇÃO — PRÓXIMO DO LIMITE'; pill.className = 'status-pill status-alerta';
-    } else {
-      pill.textContent = '✓ DENTRO DOS LIMITES'; pill.className = 'status-pill status-ok';
-    }
+    // Tabela — amostra máx 500 linhas
+    const step   = Math.ceil(feeds.length/500);
+    const sample = feeds.filter((_,i)=>i%step===0);
 
-    document.getElementById('ultima-atualizacao').textContent =
-      'Atualizado: ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    tbody.innerHTML = sample.map(f=>{
+      const t=parseFloat(f.field1), u=parseFloat(f.field2);
+      const tBom=!isNaN(t)&&tOk(t), uBom=!isNaN(u)&&uOk(u);
+      return `<tr>
+        <td>${fmtDH(f.created_at)}</td>
+        <td class="${!isNaN(t)?(tBom?'td-ok':'td-critico'):''}">${!isNaN(t)?t.toFixed(1)+'°C':'–'}</td>
+        <td>${tMn!==null?tMn.toFixed(1)+'°C':'–'}</td>
+        <td>${tMx!==null?tMx.toFixed(1)+'°C':'–'}</td>
+        <td class="${!isNaN(u)?(uBom?'td-ok':'td-critico'):''}">${!isNaN(u)?u.toFixed(1)+'%':'–'}</td>
+        <td>${uMn!==null?uMn.toFixed(1)+'%':'–'}</td>
+        <td>${uMx!==null?uMx.toFixed(1)+'%':'–'}</td>
+        <td>${(tBom&&uBom)?'<span class="tag-ok">✓ OK</span>':'<span class="tag-fora">⚠ FORA</span>'}</td>
+      </tr>`;
+    }).join('');
 
-  } catch (e) { console.error(e); }
+  }catch(e){
+    tbody.innerHTML=`<tr><td colspan="8" class="estado">Erro ao buscar dados: ${e.message}</td></tr>`;
+  }
 }
 
-async function atualizarMinMax() {
-  try {
-    const r = await fetch(`https://api.thingspeak.com/channels/${CHANNEL}/feeds.json?api_key=${API_KEY}&results=288`);
-    const d = await r.json();
-    const f = d.feeds || [];
-    const ts = f.map(x => parseFloat(x.field1)).filter(v => !isNaN(v));
-    const hs = f.map(x => parseFloat(x.field2)).filter(v => !isNaN(v));
-    if (ts.length) {
-      document.getElementById('temp-min').textContent = Math.min(...ts).toFixed(1) + '°C';
-      document.getElementById('temp-max').textContent = Math.max(...ts).toFixed(1) + '°C';
-    }
-    if (hs.length) {
-      document.getElementById('umid-min').textContent = Math.min(...hs).toFixed(1) + '%';
-      document.getElementById('umid-max').textContent = Math.max(...hs).toFixed(1) + '%';
-    }
-  } catch (e) { console.error(e); }
-}
+carregar();
 </script>
 </body>
 </html>
