@@ -14,45 +14,44 @@
   }
   * { margin:0; padding:0; box-sizing:border-box; }
 
-  /* Impede scroll horizontal na página toda — o header deixa de "vazar" */
-  html, body { overflow-x:hidden; }
-  body { font-family:'Syne',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
-
-  header {
-    background:#0a0a0a; padding:0 2rem;
-    display:flex; align-items:center; justify-content:space-between;
-    height:70px;
-    /* fixed em vez de sticky: garante que o header gruda na viewport
-       independentemente de qualquer scroll horizontal do conteúdo */
-    position:fixed; top:0; left:0; right:0;
-    z-index:100;
-    box-shadow:0 2px 16px rgba(0,0,0,.4);
-    border-bottom:2px solid var(--verde-mid);
+  /* ── FIX PRINCIPAL: impede qualquer elemento de vazar além da viewport ── */
+  html { overflow-x: hidden; }
+  body {
+    font-family:'Syne',sans-serif; background:var(--bg); color:var(--text);
+    min-height:100vh;
+    overflow-x: hidden;
   }
 
-  /* Empurra o conteúdo para baixo do header fixo */
-  body::before { content:''; display:block; height:70px; }
-  .header-brand { display:flex; align-items:center; gap:10px; }
-  .header-flame { font-size:1.5rem; line-height:1; }
-  .header-divider { width:1px; height:32px; background:rgba(255,255,255,.12); }
-  .header-name { display:flex; flex-direction:column; }
-  .header-name strong { color:#fff; font-size:1.1rem; font-weight:700; letter-spacing:.03em; line-height:1.2; }
-  .header-logo-img { height:58px; width:auto; object-fit:contain; filter:brightness(1.2) drop-shadow(0 0 12px rgba(255,100,0,.7)); }
-  .header-right { display:flex; align-items:center; gap:16px; }
+  header {
+    background:#0a0a0a; padding:0 1.25rem;
+    display:flex; align-items:center; justify-content:space-between;
+    height:70px;
+    position:sticky; top:0; z-index:100;
+    box-shadow:0 2px 16px rgba(0,0,0,.4);
+    border-bottom:2px solid var(--verde-mid);
+    width:100%;
+    max-width:100vw;
+  }
+  .header-brand { display:flex; align-items:center; gap:10px; min-width:0; }
+  .header-divider { width:1px; height:32px; background:rgba(255,255,255,.12); flex-shrink:0; }
+  .header-name { display:flex; flex-direction:column; min-width:0; }
+  .header-name strong { color:#fff; font-size:1.1rem; font-weight:700; letter-spacing:.03em; line-height:1.2; white-space:nowrap; }
+  .header-logo-img { height:52px; width:auto; object-fit:contain; flex-shrink:0; filter:brightness(1.2) drop-shadow(0 0 12px rgba(255,100,0,.7)); }
+  .header-right { display:flex; align-items:center; gap:12px; flex-shrink:0; }
   .header-title { display:flex; flex-direction:column; align-items:flex-end; }
   .header-title span:first-child { font-size:.7rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--verde-light); }
   .header-title span:last-child { font-family:'DM Mono',monospace; font-size:.65rem; color:rgba(255,255,255,.5); }
-  .btn-voltar { display:flex; align-items:center; gap:6px; padding:5px 14px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); border-radius:20px; color:rgba(255,255,255,.75); font-family:'DM Mono',monospace; font-size:.72rem; text-decoration:none; transition:all .15s; }
+  .btn-voltar { display:flex; align-items:center; gap:6px; padding:5px 12px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); border-radius:20px; color:rgba(255,255,255,.75); font-family:'DM Mono',monospace; font-size:.72rem; text-decoration:none; transition:all .15s; white-space:nowrap; }
   .btn-voltar:hover { background:rgba(255,255,255,.18); color:#fff; }
 
-  main { max-width:1200px; margin:0 auto; padding:2rem 1.5rem; display:grid; gap:1.5rem; }
+  main { max-width:1200px; margin:0 auto; padding:2rem 1rem; display:grid; gap:1.5rem; width:100%; }
 
   .section-title { font-size:.7rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); display:flex; align-items:center; gap:8px; }
   .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
 
   .historico-card { background:var(--card); border:2px solid var(--border); border-radius:16px; overflow:hidden; }
   .historico-toolbar {
-    padding:1rem 1.5rem; border-bottom:1px solid var(--border); background:#fafcfa;
+    padding:1rem 1.25rem; border-bottom:1px solid var(--border); background:#fafcfa;
     display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.75rem;
   }
   .historico-toolbar-info { display:flex; flex-direction:column; gap:3px; }
@@ -63,11 +62,12 @@
     padding:5px 16px; background:var(--verde-mid); color:#fff;
     border:none; border-radius:20px;
     font-family:'Syne',sans-serif; font-weight:700; font-size:.75rem;
-    cursor:pointer; transition:background .2s;
+    cursor:pointer; transition:background .2s; white-space:nowrap;
   }
   .btn-imprimir:hover { background:var(--verde); }
 
-  .historico-scroll { overflow-x:auto; }
+  /* ── Tabela com scroll interno — não vaza ── */
+  .historico-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; }
   table { width:100%; border-collapse:collapse; font-size:.84rem; }
   thead th { background:var(--verde); color:#fff; padding:10px 14px; text-align:center; font-size:.7rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
   tbody tr:nth-child(even) { background:var(--verde-pale); }
@@ -82,7 +82,7 @@
   .resumo-grid {
     display:grid;
     grid-template-columns:repeat(4,1fr);
-    gap:1.5rem;
+    gap:1rem;
     margin-bottom:1.5rem;
   }
 
@@ -90,12 +90,12 @@
     background:var(--card);
     border:2px solid var(--border);
     border-radius:16px;
-    padding:1.4rem 1rem 1.2rem;
+    padding:1.2rem .75rem 1rem;
     text-align:center;
     position:relative;
     cursor:help;
-    /* Garante que não corta nada internamente */
     overflow:visible;
+    min-width:0;
   }
   .resumo-card::before {
     content:''; position:absolute; top:0; left:0; right:0;
@@ -104,16 +104,16 @@
   .resumo-card.alerta::before  { background:var(--amarelo); }
   .resumo-card.critico::before { background:var(--vermelho); }
 
-  .resumo-label { font-size:.62rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; }
-  .resumo-valor { font-family:'DM Mono',monospace; font-size:2rem; font-weight:500; color:var(--verde); line-height:1; margin-bottom:6px; }
+  .resumo-label { font-size:.58rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; }
+  .resumo-valor { font-family:'DM Mono',monospace; font-size:clamp(1.4rem,4vw,2rem); font-weight:500; color:var(--verde); line-height:1; margin-bottom:6px; }
   .resumo-valor.alerta  { color:var(--amarelo); }
   .resumo-valor.critico { color:var(--vermelho); }
-  .resumo-status { font-size:.68rem; font-weight:700; letter-spacing:.06em; margin-top:4px; }
+  .resumo-status { font-size:.65rem; font-weight:700; letter-spacing:.04em; margin-top:4px; }
 
   .limite-ref {
     margin-top:8px;
     font-family:'DM Mono',monospace;
-    font-size:.68rem;
+    font-size:.62rem;
     color:var(--text-muted);
     letter-spacing:.02em;
   }
@@ -122,9 +122,9 @@
   .amp-escala {
     display:flex;
     flex-direction:column;
-    gap:6px;
-    margin-top:12px;
-    padding:10px;
+    gap:4px;
+    margin-top:10px;
+    padding:8px;
     background:#f5f9f5;
     border-radius:10px;
     border:1px solid var(--border);
@@ -133,27 +133,20 @@
     display:flex;
     align-items:center;
     justify-content:space-between;
-    font-size:.72rem;
+    font-size:.65rem;
     font-weight:700;
-    padding:5px 10px;
-    border-radius:8px;
+    padding:4px 8px;
+    border-radius:6px;
     letter-spacing:.02em;
     opacity:.55;
     transition:opacity .2s, transform .2s;
   }
   .amp-tag .amp-label { flex:1; text-align:left; }
-  .amp-tag .amp-range { font-family:'DM Mono',monospace; font-size:.68rem; opacity:.85; }
-
+  .amp-tag .amp-range { font-family:'DM Mono',monospace; font-size:.62rem; opacity:.85; }
   .amp-tag.ok      { background:#e8f5e9; color:#1b5e20; }
   .amp-tag.alerta  { background:#fff8e1; color:#e65100; }
   .amp-tag.critico { background:#ffebee; color:#c62828; }
-
-  .amp-tag.ativo {
-    opacity:1;
-    transform:scale(1.03);
-    outline:2px solid currentColor;
-    outline-offset:1px;
-  }
+  .amp-tag.ativo { opacity:1; transform:scale(1.03); outline:2px solid currentColor; outline-offset:1px; }
 
   /* ─── TOOLTIP GLOBAL (position:fixed — sem clipping) ─── */
   .tooltip-box {
@@ -175,12 +168,7 @@
     transition: opacity .2s, visibility .2s;
     pointer-events: none;
   }
-  .tooltip-box.visivel {
-    visibility: visible;
-    opacity: 1;
-  }
-
-  /* Esconde os tooltips inline antigos — usados só como fonte de texto */
+  .tooltip-box.visivel { visibility: visible; opacity: 1; }
   .tooltip { display: none !important; }
 
   .estado { padding:2.5rem; text-align:center; color:var(--text-muted); font-family:'DM Mono',monospace; }
@@ -197,8 +185,8 @@
   }
 
   @media (max-width:700px) {
-    .resumo-grid { grid-template-columns:1fr 1fr; }
-    .header-logo-img { height:44px; }
+    main { padding:1rem .75rem; gap:1rem; }
+    .resumo-grid { grid-template-columns:1fr 1fr; gap:.75rem; }
     .header-title { display:none; }
   }
 </style>
@@ -226,29 +214,25 @@
 
 <main>
 
-  <!-- RESUMO ANALÍTICO -->
   <div class="section-title">Resumo do Período</div>
   <div class="resumo-grid">
 
-    <!-- Card 1 -->
     <div class="resumo-card" id="card-tmed">
       <div class="tooltip">Média de todas as leituras de temperatura do período. Valores acima de 25°C aceleram reações de degradação química, reduzem a potência de antibióticos e hormônios, e favorecem o crescimento de microrganismos. Abaixo de 15°C podem ocorrer cristalização de soluções e desnaturação de proteínas em biológicos.</div>
       <div class="resumo-label">🌡️ Temp. Média</div>
       <div class="resumo-valor" id="res-tmed"><span class="loading">···</span></div>
       <div class="resumo-status" id="res-tmed-st"></div>
-      <div class="limite-ref">Limite ANVISA: 15°C – 25°C</div>
+      <div class="limite-ref">ANVISA: 15°C – 25°C</div>
     </div>
 
-    <!-- Card 2 -->
     <div class="resumo-card" id="card-umed">
       <div class="tooltip">Média de todas as leituras de umidade no período. Umidade alta favorece mofo e degradação de cápsulas e comprimidos. Umidade baixa resseca embalagens e pós.</div>
       <div class="resumo-label">💧 Umid. Média</div>
       <div class="resumo-valor" id="res-umed"><span class="loading">···</span></div>
       <div class="resumo-status" id="res-umed-st"></div>
-      <div class="limite-ref">Limite ANVISA: 40% – 70%</div>
+      <div class="limite-ref">ANVISA: 40% – 70%</div>
     </div>
 
-    <!-- Card 3 -->
     <div class="resumo-card" id="card-hfora">
       <div class="tooltip">Quantidade de leituras em que temperatura ou umidade estavam fora dos limites ANVISA RDC 301. Cada leitura representa ~5 min de monitoramento.</div>
       <div class="resumo-label">⚠️ Leituras Fora</div>
@@ -256,7 +240,6 @@
       <div class="resumo-status" id="res-hfora-st"></div>
     </div>
 
-    <!-- Card 4 -->
     <div class="resumo-card" id="card-amp">
       <div class="tooltip">Diferença entre a temperatura máxima e mínima registrada no período. Oscilações bruscas aceleram a proliferação de fungos e microrganismos, quebram princípios ativos, comprometem embalagens e podem causar condensação interna em frascos — mesmo que a temperatura média pareça aceitável. Quanto menor a variação, maior a segurança do estoque.</div>
       <div class="resumo-label">📈 Amplitude Térmica</div>
@@ -280,7 +263,6 @@
 
   </div>
 
-  <!-- TABELA -->
   <div class="historico-card">
     <div class="historico-toolbar">
       <div class="historico-toolbar-info">
@@ -316,7 +298,6 @@
   Limites ANVISA: Temperatura 15°C – 25°C | Umidade Relativa 40% – 70%
 </footer>
 
-<!-- Tooltip global — renderizado fora de qualquer container com overflow -->
 <div class="tooltip-box" id="tooltip-global"></div>
 
 <script>
@@ -364,7 +345,6 @@ async function carregar(){
     const uMn = hs.length?Math.min(...hs):null;
     const uMx = hs.length?Math.max(...hs):null;
 
-    // === RESUMO ANALÍTICO ===
     const tMed = ts.length ? ts.reduce((a,b)=>a+b,0)/ts.length : null;
     const uMed = hs.length ? hs.reduce((a,b)=>a+b,0)/hs.length : null;
     const amp  = (tMn!==null&&tMx!==null) ? tMx-tMn : null;
@@ -374,33 +354,29 @@ async function carregar(){
     }).length;
     const pctFora = feeds.length ? ((fora/feeds.length)*100).toFixed(1) : 0;
 
-    // Temp média
     if(tMed!==null){
       const s=tMed<TMIN||tMed>TMAX?'critico':tMed>TMAX-2||tMed<TMIN+2?'alerta':'ok';
-      document.getElementById('res-tmed').innerHTML=`${tMed.toFixed(1)}<span class="resumo-unidade">°C</span>`;
+      document.getElementById('res-tmed').innerHTML=`${tMed.toFixed(1)}<span style="font-size:1rem;color:var(--text-muted)">°C</span>`;
       document.getElementById('res-tmed').className=`resumo-valor ${s!='ok'?s:''}`;
       document.getElementById('card-tmed').className=`resumo-card ${s!='ok'?s:''}`;
       document.getElementById('res-tmed-st').innerHTML=s==='ok'?'<span style="color:#2e7d32">✓ Dentro do limite</span>':s==='alerta'?'<span style="color:#e65100">⚡ Próximo do limite</span>':'<span style="color:#c62828">⚠ Fora do limite</span>';
     }
-    // Umid média
     if(uMed!==null){
       const s=uMed<UMIN||uMed>UMAX?'critico':uMed>UMAX-5||uMed<UMIN+5?'alerta':'ok';
-      document.getElementById('res-umed').innerHTML=`${uMed.toFixed(1)}<span class="resumo-unidade">%</span>`;
+      document.getElementById('res-umed').innerHTML=`${uMed.toFixed(1)}<span style="font-size:1rem;color:var(--text-muted)">%</span>`;
       document.getElementById('res-umed').className=`resumo-valor ${s!='ok'?s:''}`;
       document.getElementById('card-umed').className=`resumo-card ${s!='ok'?s:''}`;
       document.getElementById('res-umed-st').innerHTML=s==='ok'?'<span style="color:#2e7d32">✓ Dentro do limite</span>':s==='alerta'?'<span style="color:#e65100">⚡ Próximo do limite</span>':'<span style="color:#c62828">⚠ Fora do limite</span>';
     }
-    // Leituras fora
     const sf=fora===0?'ok':pctFora>20?'critico':'alerta';
-    document.getElementById('res-hfora').innerHTML=`${fora}<span class="resumo-unidade"> / ${feeds.length}</span>`;
+    document.getElementById('res-hfora').innerHTML=`${fora}<span style="font-size:.9rem;color:var(--text-muted)"> / ${feeds.length}</span>`;
     document.getElementById('res-hfora').className=`resumo-valor ${sf!='ok'?sf:''}`;
     document.getElementById('card-hfora').className=`resumo-card ${sf!='ok'?sf:''}`;
     document.getElementById('res-hfora-st').innerHTML=fora===0?'<span style="color:#2e7d32">✓ Nenhuma fora</span>':`<span style="color:${sf==='critico'?'#c62828':'#e65100'}">${pctFora}% das leituras</span>`;
 
-    // Amplitude térmica
     if(amp!==null){
       const sa=amp<=5?'ok':amp<=8?'alerta':'critico';
-      document.getElementById('res-amp').innerHTML=`${amp.toFixed(1)}<span class="resumo-unidade">°C</span>`;
+      document.getElementById('res-amp').innerHTML=`${amp.toFixed(1)}<span style="font-size:1rem;color:var(--text-muted)">°C</span>`;
       document.getElementById('res-amp').className=`resumo-valor ${sa!='ok'?sa:''}`;
       document.getElementById('card-amp').className=`resumo-card ${sa!='ok'?sa:''}`;
       document.getElementById('res-amp-st').innerHTML=sa==='ok'?'<span style="color:#2e7d32">✓ Estável</span>':sa==='alerta'?'<span style="color:#e65100">⚡ Moderada</span>':'<span style="color:#c62828">⚠ Alta variação</span>';
@@ -409,7 +385,6 @@ async function carregar(){
       document.getElementById('amp-tag-critico').classList.toggle('ativo', sa==='critico');
     }
 
-    // Tabela — amostra máx 500 linhas
     const step   = Math.ceil(feeds.length/500);
     const sample = feeds.filter((_,i)=>i%step===0);
 
@@ -446,17 +421,15 @@ carregar();
   function posicionar(card) {
     const r   = card.getBoundingClientRect();
     const tw  = 230;
-    const th  = tooltipEl.offsetHeight || 120; // estimativa antes de renderizar
+    const th  = tooltipEl.offsetHeight || 120;
     const gap = 10;
     const vw  = window.innerWidth;
     const vh  = window.innerHeight;
 
-    // Posição horizontal: centralizado no card, sem vazar nas bordas
     let left = r.left + r.width / 2 - tw / 2;
     if (left + tw > vw - 8) left = vw - tw - 8;
     if (left < 8)           left = 8;
 
-    // Posição vertical: tenta abaixo, se não couber abre acima
     let top = r.bottom + gap;
     if (top + th > vh - 8) top = r.top - th - gap;
     if (top < 8)            top = 8;
@@ -469,7 +442,6 @@ carregar();
     const fonte = card.querySelector('.tooltip');
     if (!fonte) return;
     tooltipEl.innerHTML = fonte.innerHTML;
-    // Posiciona antes de mostrar para calcular altura correta
     tooltipEl.style.visibility = 'hidden';
     tooltipEl.style.opacity    = '0';
     tooltipEl.classList.add('visivel');
@@ -479,27 +451,22 @@ carregar();
   }
 
   document.querySelectorAll('.resumo-card').forEach(card => {
-    // Desktop: hover
     card.addEventListener('mouseenter', () => mostrar(card));
     card.addEventListener('mouseleave', esconder);
-
-    // Mobile: tap para abrir/fechar
     card.addEventListener('touchstart', e => {
       if (tooltipEl.classList.contains('visivel')) {
         esconder();
       } else {
         mostrar(card);
-        e.preventDefault(); // evita mouseenter duplo em alguns browsers
+        e.preventDefault();
       }
     }, { passive: false });
   });
 
-  // Toque fora de qualquer card fecha o tooltip
   document.addEventListener('touchstart', e => {
     if (!e.target.closest('.resumo-card')) esconder();
   }, { passive: true });
 
-  // Scroll fecha o tooltip (mobile)
   window.addEventListener('scroll', esconder, { passive: true });
 })();
 </script>
