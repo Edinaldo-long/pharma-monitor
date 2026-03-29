@@ -13,15 +13,25 @@
     --text-muted: #5a7a5a; --border: #c8dcc8;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
+
+  /* Impede scroll horizontal na página toda — o header deixa de "vazar" */
+  html, body { overflow-x:hidden; }
   body { font-family:'Syne',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
 
   header {
     background:#0a0a0a; padding:0 2rem;
     display:flex; align-items:center; justify-content:space-between;
-    height:70px; position:sticky; top:0; z-index:100;
+    height:70px;
+    /* fixed em vez de sticky: garante que o header gruda na viewport
+       independentemente de qualquer scroll horizontal do conteúdo */
+    position:fixed; top:0; left:0; right:0;
+    z-index:100;
     box-shadow:0 2px 16px rgba(0,0,0,.4);
     border-bottom:2px solid var(--verde-mid);
   }
+
+  /* Empurra o conteúdo para baixo do header fixo */
+  body::before { content:''; display:block; height:70px; }
   .header-brand { display:flex; align-items:center; gap:10px; }
   .header-flame { font-size:1.5rem; line-height:1; }
   .header-divider { width:1px; height:32px; background:rgba(255,255,255,.12); }
