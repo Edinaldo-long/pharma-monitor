@@ -13,32 +13,48 @@
     --text-muted: #5a7a5a; --border: #c8dcc8;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Syne',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+  /* ── FIX PRINCIPAL: impede qualquer elemento de vazar além da viewport ── */
+  html { overflow-x: hidden; }
+  body {
+    font-family:'Syne',sans-serif; background:var(--bg); color:var(--text);
+    min-height:100vh;
+    overflow-x: hidden; /* dupla garantia */
+    /* Cria um novo stacking context no body para o sticky funcionar
+       mesmo com overflow-x hidden no html */
+  }
 
   header {
-    background:#0a0a0a; padding:0 2rem;
+    background:#0a0a0a; padding:0 1.25rem;
     display:flex; align-items:center; justify-content:space-between;
-    height:70px; position:sticky; top:0; z-index:100;
+    height:70px;
+    /* sticky funciona quando html+body NÃO têm overflow:hidden no eixo Y.
+       Com overflow-x:hidden apenas, sticky continua funcional. */
+    position:sticky; top:0; z-index:100;
     box-shadow:0 2px 16px rgba(0,0,0,.4);
     border-bottom:2px solid var(--verde-mid);
+    /* Garante que o header sempre preencha a largura da viewport */
+    width:100%;
+    max-width:100vw;
   }
-  .header-brand { display:flex; align-items:center; gap:10px; }
+  .header-brand { display:flex; align-items:center; gap:10px; min-width:0; }
   .header-flame { font-size:1.5rem; line-height:1; }
-  .header-divider { width:1px; height:32px; background:rgba(255,255,255,.12); }
-  .header-name { display:flex; flex-direction:column; }
-  .header-name strong { color:#fff; font-size:1.1rem; font-weight:700; letter-spacing:.03em; line-height:1.2; }
-  .header-logo-img { height:58px; width:auto; object-fit:contain; filter:brightness(1.2) drop-shadow(0 0 12px rgba(255,100,0,.7)); }
-  .header-right { display:flex; align-items:center; gap:16px; }
+  .header-divider { width:1px; height:32px; background:rgba(255,255,255,.12); flex-shrink:0; }
+  .header-name { display:flex; flex-direction:column; min-width:0; }
+  .header-name strong { color:#fff; font-size:1.1rem; font-weight:700; letter-spacing:.03em; line-height:1.2; white-space:nowrap; }
+  .header-logo-img { height:52px; width:auto; object-fit:contain; flex-shrink:0; filter:brightness(1.2) drop-shadow(0 0 12px rgba(255,100,0,.7)); }
+  .header-right { display:flex; align-items:center; gap:12px; flex-shrink:0; }
   .header-title { display:flex; flex-direction:column; align-items:flex-end; }
   .header-title span:first-child { font-size:.7rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--verde-light); }
   .header-title span:last-child { font-family:'DM Mono',monospace; font-size:.65rem; color:rgba(255,255,255,.5); }
-  .status-badge { display:flex; align-items:center; gap:6px; background:rgba(76,175,80,.15); border:1px solid rgba(76,175,80,.3); border-radius:20px; padding:5px 14px; font-family:'DM Mono',monospace; font-size:.72rem; color:var(--verde-light); }
-  .dot { width:7px; height:7px; border-radius:50%; background:var(--verde-light); animation:pulse 2s infinite; }
+  .status-badge { display:flex; align-items:center; gap:6px; background:rgba(76,175,80,.15); border:1px solid rgba(76,175,80,.3); border-radius:20px; padding:5px 12px; font-family:'DM Mono',monospace; font-size:.72rem; color:var(--verde-light); white-space:nowrap; }
+  .dot { width:7px; height:7px; border-radius:50%; background:var(--verde-light); animation:pulse 2s infinite; flex-shrink:0; }
   @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
 
-  main { max-width:1100px; margin:0 auto; padding:2rem 1.5rem; display:grid; gap:1.5rem; }
+  /* ── main usa padding seguro para não vazar ── */
+  main { max-width:1100px; margin:0 auto; padding:2rem 1rem; display:grid; gap:1.5rem; width:100%; }
 
-  .anvisa-banner { background:var(--card); border:2px solid var(--border); border-radius:16px; padding:1rem 1.5rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+  .anvisa-banner { background:var(--card); border:2px solid var(--border); border-radius:16px; padding:1rem 1.25rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
   .anvisa-banner .label { font-size:.68rem; font-weight:700; letter-spacing:.1em; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; }
   .status-pill { padding:6px 18px; border-radius:20px; font-size:.85rem; font-weight:700; letter-spacing:.04em; }
   .status-ok     { background:#e8f5e9; color:#1b5e20; border:1.5px solid #4caf50; }
@@ -49,8 +65,9 @@
   .section-title { font-size:.7rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); display:flex; align-items:center; gap:8px; }
   .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
 
-  .cards-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
-  .sensor-card { background:var(--card); border:2px solid var(--border); border-radius:20px; padding:1.5rem; position:relative; overflow:hidden; transition:transform .2s,box-shadow .2s; }
+  /* ── cards-grid: gap menor no mobile para não vazar ── */
+  .cards-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .sensor-card { background:var(--card); border:2px solid var(--border); border-radius:20px; padding:1.25rem 1rem; position:relative; overflow:hidden; transition:transform .2s,box-shadow .2s; min-width:0; }
   .sensor-card:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,0,0,.08); }
   .sensor-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:var(--verde-mid); border-radius:20px 20px 0 0; }
   .sensor-card.alerta::before  { background:var(--amarelo); }
@@ -58,30 +75,30 @@
   .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
   .card-title { font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); }
   .card-icon { font-size:1.4rem; }
-  .valor-atual { font-family:'DM Mono',monospace; font-size:3.5rem; font-weight:500; color:var(--verde); line-height:1; margin-bottom:.5rem; }
+  .valor-atual { font-family:'DM Mono',monospace; font-size:clamp(2rem,8vw,3.5rem); font-weight:500; color:var(--verde); line-height:1; margin-bottom:.5rem; }
   .valor-atual.alerta  { color:#e65100; }
   .valor-atual.critico { color:var(--vermelho); }
-  .valor-unidade { font-size:1.5rem; font-weight:400; color:var(--text-muted); }
+  .valor-unidade { font-size:clamp(1rem,4vw,1.5rem); font-weight:400; color:var(--text-muted); }
   .progress-bar-wrap { margin-top:1rem; }
-  .progress-bar-label { display:flex; justify-content:space-between; font-size:.65rem; color:var(--text-muted); margin-bottom:4px; font-family:'DM Mono',monospace; }
+  .progress-bar-label { display:flex; justify-content:space-between; font-size:.6rem; color:var(--text-muted); margin-bottom:4px; font-family:'DM Mono',monospace; }
   .progress-bar-bg { height:6px; background:var(--verde-pale); border-radius:3px; overflow:hidden; }
   .progress-bar-fill { height:100%; border-radius:3px; background:var(--verde-mid); transition:width .8s ease; }
   .progress-bar-fill.alerta  { background:var(--amarelo); }
   .progress-bar-fill.critico { background:var(--vermelho); }
-  .minmax-row { display:flex; gap:1rem; margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border); }
-  .minmax-item { flex:1; text-align:center; }
-  .minmax-label { font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:2px; }
-  .minmax-valor { font-family:'DM Mono',monospace; font-size:1.1rem; font-weight:500; }
+  .minmax-row { display:flex; gap:.5rem; margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border); }
+  .minmax-item { flex:1; text-align:center; min-width:0; }
+  .minmax-label { font-size:.58rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); margin-bottom:2px; }
+  .minmax-valor { font-family:'DM Mono',monospace; font-size:clamp(.85rem,3vw,1.1rem); font-weight:500; }
 
   .graficos-card { background:var(--card); border:2px solid var(--border); border-radius:16px; overflow:hidden; }
-  .graficos-toolbar { padding:1rem 1.5rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.75rem; background:#fafcfa; }
+  .graficos-toolbar { padding:1rem 1.25rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.75rem; background:#fafcfa; }
   .graficos-toolbar h3 { font-size:.72rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); }
   .periodo-btns { display:flex; gap:6px; flex-wrap:wrap; }
-  .periodo-btn { padding:5px 14px; border-radius:20px; border:1.5px solid var(--border); background:#fff; font-family:'Syne',sans-serif; font-size:.75rem; font-weight:600; color:var(--text-muted); cursor:pointer; transition:all .15s; }
+  .periodo-btn { padding:5px 12px; border-radius:20px; border:1.5px solid var(--border); background:#fff; font-family:'Syne',sans-serif; font-size:.75rem; font-weight:600; color:var(--text-muted); cursor:pointer; transition:all .15s; }
   .periodo-btn:hover { border-color:var(--verde-mid); color:var(--verde-mid); }
   .periodo-btn.ativo { background:var(--verde-mid); border-color:var(--verde-mid); color:#fff; }
   .graficos-grid { display:grid; grid-template-columns:1fr 1fr; }
-  .grafico-item { padding:1rem 1.5rem 1.5rem; }
+  .grafico-item { padding:1rem 1.25rem 1.5rem; min-width:0; }
   .grafico-item:first-child { border-right:1px solid var(--border); }
   .grafico-item h4 { font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); margin-bottom:.75rem; }
   .grafico-item iframe { width:100%; height:250px; border:none; border-radius:8px; display:block; }
@@ -107,10 +124,14 @@
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
   @media (max-width:700px) {
-    .cards-grid,.graficos-grid { grid-template-columns:1fr; }
+    main { padding:1rem .75rem; gap:1rem; }
+    .cards-grid { grid-template-columns:1fr; gap:.75rem; }
+    .graficos-grid { grid-template-columns:1fr; }
     .grafico-item:first-child { border-right:none; border-bottom:1px solid var(--border); }
     .header-name small { display:none; }
     .header-title { display:none; }
+    /* garante que o badge "AO VIVO" não estoure */
+    .status-badge { font-size:.65rem; padding:4px 10px; }
   }
 </style>
 </head>
@@ -157,28 +178,28 @@
       </div>
       <div class="valor-atual" id="temp-atual"><span class="loading">···</span></div>
       <div class="progress-bar-wrap">
-        <div class="progress-bar-label"><span>15°C (mín)</span><span id="temp-barra-label">–</span><span>25°C (máx)</span></div>
+        <div class="progress-bar-label"><span>15°C</span><span id="temp-barra-label">–</span><span>25°C</span></div>
         <div class="progress-bar-bg"><div class="progress-bar-fill" id="temp-barra" style="width:0%"></div></div>
       </div>
       <div class="minmax-row">
-        <div class="minmax-item"><div class="minmax-label">Mínima (24h)</div><div class="minmax-valor" id="temp-min">–</div></div>
-        <div class="minmax-item"><div class="minmax-label">Máxima (24h)</div><div class="minmax-valor" id="temp-max">–</div></div>
+        <div class="minmax-item"><div class="minmax-label">Mín 24h</div><div class="minmax-valor" id="temp-min">–</div></div>
+        <div class="minmax-item"><div class="minmax-label">Máx 24h</div><div class="minmax-valor" id="temp-max">–</div></div>
       </div>
     </div>
 
     <div class="sensor-card" id="card-umid">
       <div class="card-header">
-        <div class="card-title">Umidade Relativa</div>
+        <div class="card-title">Umidade</div>
         <div class="card-icon">💧</div>
       </div>
       <div class="valor-atual" id="umid-atual"><span class="loading">···</span></div>
       <div class="progress-bar-wrap">
-        <div class="progress-bar-label"><span>40% (mín)</span><span id="umid-barra-label">–</span><span>70% (máx)</span></div>
+        <div class="progress-bar-label"><span>40%</span><span id="umid-barra-label">–</span><span>70%</span></div>
         <div class="progress-bar-bg"><div class="progress-bar-fill" id="umid-barra" style="width:0%"></div></div>
       </div>
       <div class="minmax-row">
-        <div class="minmax-item"><div class="minmax-label">Mínima (24h)</div><div class="minmax-valor" id="umid-min">–</div></div>
-        <div class="minmax-item"><div class="minmax-label">Máxima (24h)</div><div class="minmax-valor" id="umid-max">–</div></div>
+        <div class="minmax-item"><div class="minmax-label">Mín 24h</div><div class="minmax-valor" id="umid-min">–</div></div>
+        <div class="minmax-item"><div class="minmax-label">Máx 24h</div><div class="minmax-valor" id="umid-max">–</div></div>
       </div>
     </div>
   </div>
@@ -189,11 +210,11 @@
     <div class="graficos-toolbar">
       <h3>📊 Selecione o período de visualização</h3>
       <div class="periodo-btns">
-        <button class="periodo-btn ativo" onclick="mudarPeriodo(60,this)">1 hora</button>
-        <button class="periodo-btn" onclick="mudarPeriodo(288,this)">24 horas</button>
-        <button class="periodo-btn" onclick="mudarPeriodo(1008,this)">3 dias</button>
-        <button class="periodo-btn" onclick="mudarPeriodo(2016,this)">7 dias</button>
-        <button class="periodo-btn" onclick="mudarPeriodo(8640,this)">30 dias</button>
+        <button class="periodo-btn ativo" onclick="mudarPeriodo(60,this)">1h</button>
+        <button class="periodo-btn" onclick="mudarPeriodo(288,this)">24h</button>
+        <button class="periodo-btn" onclick="mudarPeriodo(1008,this)">3d</button>
+        <button class="periodo-btn" onclick="mudarPeriodo(2016,this)">7d</button>
+        <button class="periodo-btn" onclick="mudarPeriodo(8640,this)">30d</button>
       </div>
     </div>
     <div class="graficos-grid">
@@ -219,7 +240,7 @@
         <h4>🌡️ Temperatura</h4>
         <p style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--text-muted);text-align:center;">Clique para abrir o painel completo de temperatura no Grafana</p>
         <a href="https://esatakeu.grafana.net/public-dashboards/a19310195eec42ffb06b5072b6db2d4f" target="_blank"
-          style="display:inline-flex;align-items:center;gap:8px;padding:10px 28px;background:var(--verde-mid);color:#fff;border-radius:20px;text-decoration:none;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;transition:background .2s;"
+          style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:var(--verde-mid);color:#fff;border-radius:20px;text-decoration:none;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;transition:background .2s;text-align:center;"
           onmouseover="this.style.background='#1b5e20'" onmouseout="this.style.background='#2e7d32'">
           📊 Abrir Painel de Temperatura
         </a>
@@ -228,7 +249,7 @@
         <h4>💧 Umidade Relativa</h4>
         <p style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--text-muted);text-align:center;">Clique para abrir o painel completo de umidade no Grafana</p>
         <a href="https://esatakeu.grafana.net/public-dashboards/f6bd16c53b45416e92287fd22ccd2a7a" target="_blank"
-          style="display:inline-flex;align-items:center;gap:8px;padding:10px 28px;background:var(--verde-mid);color:#fff;border-radius:20px;text-decoration:none;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;transition:background .2s;"
+          style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:var(--verde-mid);color:#fff;border-radius:20px;text-decoration:none;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;transition:background .2s;text-align:center;"
           onmouseover="this.style.background='#1b5e20'" onmouseout="this.style.background='#2e7d32'">
           📊 Abrir Painel de Umidade
         </a>
@@ -245,7 +266,7 @@
     <div class="graficos-grid">
 
       <!-- ANALÍTICO -->
-      <div class="grafico-item" style="display:flex;flex-direction:column;gap:1rem;padding:1.5rem 2rem 2rem;">
+      <div class="grafico-item" style="display:flex;flex-direction:column;gap:1rem;padding:1.5rem 1.25rem 2rem;">
         <h4>📊 Relatório Analítico</h4>
         <p style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--text-muted);line-height:1.6;">
           Consulta detalhada por período. Ideal para análise interna do farmacêutico — visualiza temperatura e umidade leitura a leitura, com indicação de conformidade ANVISA.
@@ -266,7 +287,7 @@
       </div>
 
       <!-- OFICIAL ANVISA -->
-      <div class="grafico-item" style="display:flex;flex-direction:column;gap:1rem;padding:1.5rem 2rem 2rem;">
+      <div class="grafico-item" style="display:flex;flex-direction:column;gap:1rem;padding:1.5rem 1.25rem 2rem;">
         <h4>📄 Relatório Oficial ANVISA</h4>
         <p style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--text-muted);line-height:1.6;">
           Documento oficial gerado automaticamente pela planilha de registro. Formato padronizado para <strong>arquivamento</strong> e apresentação a autoridades sanitárias em caso de fiscalização ou auditoria.
