@@ -20,8 +20,7 @@
   }
 
   /* ══════════════════════════════════
-     HEADER — logo + nome + tagline + botão
-     sempre em UMA linha, sem display:none no nome
+     HEADER
   ══════════════════════════════════ */
   header {
     background:#0a0a0a;
@@ -192,29 +191,46 @@
     .tooltip-box { display:none !important; }
   }
 
-  /* ── MOBILE portrait — nome e tagline NUNCA somem ── */
+  /* ══════════════════════════════════
+     MOBILE portrait — CORREÇÃO PRINCIPAL
+     Garante que "Monitoramento Inteligente"
+     nunca desapareça em modo retrato
+  ══════════════════════════════════ */
   @media (max-width:700px) {
     header { height:72px; }
     main { padding:1rem .75rem; gap:1rem; }
     .resumo-grid { grid-template-columns:1fr 1fr; gap:.75rem; }
+
+    /* oculta o bloco de título/período no header para dar espaço */
     .header-title { display:none; }
-    .header-logo-img { height:36px; }
-    .header-name strong { font-size:.85rem; }
-    .header-name small  { font-size:.55rem; display:block; }
-    .btn-voltar { font-size:.62rem; padding:4px 9px; }
+
+    .header-logo-img { height:34px; }
+
+    /* brand ocupa o máximo possível */
+    .header-brand { flex:1; min-width:0; }
+
+    /* nome sempre visível */
+    .header-name { min-width:0; }
+    .header-name strong { font-size:.82rem; }
+    .header-name small  { font-size:.54rem; display:block !important; }
+
+    /* botão voltar compacto mas legível */
+    .btn-voltar { font-size:.62rem; padding:4px 10px; gap:4px; }
   }
 
+  /* ── telas muito pequenas (< 420px) ── */
   @media (max-width:420px) {
     header { height:68px; }
-    .header-name strong { font-size:.8rem; }
-    .header-name small  { font-size:.52rem; display:block; }
-    .header-logo-img { height:32px; }
-    .btn-voltar { font-size:.58rem; padding:4px 7px; }
+    .header-logo-img { height:30px; }
+    .header-name strong { font-size:.78rem; }
+    .header-name small  { font-size:.52rem; display:block !important; }
+    .btn-voltar { font-size:.58rem; padding:4px 8px; }
   }
 
+  /* ── telas minúsculas (< 340px) ── */
   @media (max-width:340px) {
     header { height:60px; }
-    .header-name small  { display:none; }
+    .header-name small  { display:none !important; }
     .header-divider { display:none; }
   }
 </style>
