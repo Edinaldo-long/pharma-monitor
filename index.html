@@ -14,14 +14,11 @@
   }
   * { margin:0; padding:0; box-sizing:border-box; }
 
-  /* ── FIX PRINCIPAL: impede qualquer elemento de vazar além da viewport ── */
   html { overflow-x: hidden; }
   body {
     font-family:'Syne',sans-serif; background:var(--bg); color:var(--text);
     min-height:100vh;
-    overflow-x: hidden; /* dupla garantia */
-    /* Cria um novo stacking context no body para o sticky funcionar
-       mesmo com overflow-x hidden no html */
+    overflow-x: hidden;
   }
 
   header {
@@ -35,7 +32,6 @@
     max-width:100vw;
   }
   .header-brand { display:flex; align-items:center; gap:10px; min-width:0; flex-shrink:1; overflow:hidden; }
-  .header-flame { font-size:1.5rem; line-height:1; }
   .header-divider { width:1px; height:32px; background:rgba(255,255,255,.12); flex-shrink:0; }
   .header-name { display:flex; flex-direction:column; min-width:0; }
   .header-name strong { color:#fff; font-size:1.1rem; font-weight:700; letter-spacing:.03em; line-height:1.2; white-space:nowrap; }
@@ -48,31 +44,11 @@
   .dot { width:7px; height:7px; border-radius:50%; background:var(--verde-light); animation:pulse 2s infinite; flex-shrink:0; }
   @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
 
-  /* ── Mobile: header em duas linhas para caber tudo ── */
-  /* Por padrão (desktop): linha 2 oculta */
+  /* Header em linha única — logo + nome + badge sempre juntos */
   .header-row-top { display:flex; align-items:center; justify-content:space-between; width:100%; }
   .header-row-bottom { display:none; }
 
-  @media (max-width:600px) {
-    header {
-      height:auto;
-      flex-direction:column;
-      align-items:stretch;
-      padding:8px 1rem;
-      gap:6px;
-    }
-    .header-row-top { justify-content:flex-start; }
-    .header-right-desktop { display:none; } /* esconde badge/título do desktop */
-    .header-row-bottom { display:flex; align-items:center; justify-content:flex-end; }
-    .header-brand { gap:8px; }
-    .header-logo-img { height:36px; }
-    .header-name strong { font-size:.95rem; }
-    .header-divider { height:24px; }
-    .header-title { display:none; }
-    .status-badge { font-size:.65rem; padding:4px 10px; }
-  }
-
-  /* ── main usa padding seguro para não vazar ── */
+  /* ── main ── */
   main { max-width:1100px; margin:0 auto; padding:2rem 1rem; display:grid; gap:1.5rem; width:100%; }
 
   .anvisa-banner { background:var(--card); border:2px solid var(--border); border-radius:16px; padding:1rem 1.25rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
@@ -86,7 +62,6 @@
   .section-title { font-size:.7rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); display:flex; align-items:center; gap:8px; }
   .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
 
-  /* ── cards-grid: gap menor no mobile para não vazar ── */
   .cards-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
   .sensor-card { background:var(--card); border:2px solid var(--border); border-radius:20px; padding:1.25rem 1rem; position:relative; overflow:hidden; transition:transform .2s,box-shadow .2s; min-width:0; }
   .sensor-card:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,0,0,.08); }
@@ -144,23 +119,38 @@
   .loading { font-family:'DM Mono',monospace; font-size:1.2rem; color:var(--text-muted); animation:blink 1s infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
+  /* ── MOBILE ── */
   @media (max-width:700px) {
+    header {
+      height:60px;
+      padding:0 1rem;
+    }
+    .header-logo-img { height:38px; }
+    .header-name strong { font-size:.9rem; }
+    .header-divider { height:24px; }
+    /* nome e divisor SEMPRE visíveis */
+    .header-name { display:flex; }
+    .header-divider { display:block; }
+    /* título (Monitor Laboratorial / horário) some no mobile para não amontoar */
+    .header-title { display:none; }
+    .status-badge { font-size:.65rem; padding:4px 10px; }
+
     main { padding:1rem .75rem; gap:1rem; }
     .cards-grid { grid-template-columns:1fr; gap:.75rem; }
     .graficos-grid { grid-template-columns:1fr; }
     .grafico-item:first-child { border-right:none; border-bottom:1px solid var(--border); }
-    .header-title { display:none; }
-    /* Esconde nome e divisor — logo + badge ficam limpos sem sobreposição */
-    .header-name { display:none; }
-    .header-divider { display:none; }
-    .status-badge { font-size:.65rem; padding:4px 10px; }
+  }
+
+  /* ── telas muito pequenas (< 380px) ── */
+  @media (max-width:380px) {
+    .header-name strong { font-size:.78rem; }
+    .status-badge { font-size:.6rem; padding:4px 8px; gap:4px; }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <!-- Linha 1: marca sempre visível -->
   <div class="header-row-top">
     <div class="header-brand">
       <img src="logo.png" alt="Vansan Therm" class="header-logo-img"
@@ -171,18 +161,13 @@
         <strong>Vansan Therm</strong>
       </div>
     </div>
-    <!-- Desktop: badge fica na linha 1 à direita -->
-    <div class="header-right header-right-desktop">
+    <div class="header-right">
       <div class="header-title">
         <span>Monitor Laboratorial</span>
         <span id="ultima-atualizacao">Carregando...</span>
       </div>
       <div class="status-badge"><div class="dot"></div>AO VIVO</div>
     </div>
-  </div>
-  <!-- Linha 2: só aparece no mobile -->
-  <div class="header-row-bottom">
-    <div class="status-badge"><div class="dot"></div>AO VIVO</div>
   </div>
 </header>
 
